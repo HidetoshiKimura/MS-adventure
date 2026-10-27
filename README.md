@@ -1,4 +1,5 @@
 # ピーク山脈 探検記
+**▶ ここで遊べます： https://hidetoshikimura.github.io/MS-adventure/**（インストール不要。PC・携帯のブラウザで開けます）
 
 MS-DIAL 5 のアライメント結果（AlignmentResult）を読み込んで、LC-MS データを歩いて回れる 3D の山脈にするブラウザアプリです。東西が RT、南北が m/z、山の高さがピーク強度（log）です。山頂の結晶に近づくと同定結果がわかり、図鑑に記録されます。
 
