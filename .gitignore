@@ -1,0 +1,25 @@
+# 測定データ・解析結果は入れない
+*.json
+*.arf
+*.arf2
+*.aef
+*.dcl
+*.pai2
+*.mddata
+*.mdproject
+*.msp
+*.msp2
+*.dbs
+*.wiff
+*.wiff2
+*.wiff.scan
+*.timeseries.data
+*_tags.xml
+*.mzML
+*.mzml
+*.abf
+*.ibf
+*.csv
+*.tsv
+# データを埋め込んだ古い版
+peak_ridge_*.html
