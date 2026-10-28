@@ -74,11 +74,12 @@ button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 #book .tabs{display:flex;gap:8px;margin:8px 0}
 #book .tabs button[aria-pressed="true"]{background:var(--edge);color:#1a232b}
 
-#pad{position:fixed;left:max(14px,env(safe-area-inset-left,0px));bottom:calc(env(safe-area-inset-bottom,0px) + 70px);display:grid;grid-template-columns:repeat(3,54px);grid-template-rows:repeat(2,54px);gap:6px}
+#pad{position:fixed;left:max(14px,env(safe-area-inset-left,0px));bottom:calc(env(safe-area-inset-bottom,0px) + 70px);display:grid;grid-template-columns:repeat(3,54px);grid-template-rows:repeat(2,54px) 40px;gap:6px}
 #pad button{padding:0;font-size:20px;background:var(--panel)}
 #pad .au{grid-column:1;grid-row:1;font-size:15px}#pad .ad{grid-column:3;grid-row:1;font-size:15px}#pad .u{grid-column:2}#pad .l{grid-column:1;grid-row:2}#pad .d{grid-column:2;grid-row:2}#pad .r{grid-column:3;grid-row:2}
+#pad .sl{grid-column:1/-1;grid-row:3;font-size:15px}
 @media (pointer:fine){#pad{display:none}}
-@media (max-width:560px){#hud-tl{font-size:11.5px;min-width:0}#mini{width:170px}#msg{bottom:calc(env(safe-area-inset-bottom,0px) + 210px)}}
+@media (max-width:560px){#hud-tl{font-size:11.5px;min-width:0}#mini{width:170px}#msg{bottom:calc(env(safe-area-inset-bottom,0px) + 250px)}}
 
 /* EIC・MS/MS パネル：画面下（左の操作ボタン列の上、右下の地図の左） */
 #spec{position:fixed;left:max(12px,env(safe-area-inset-left,0px));right:calc(max(12px,env(safe-area-inset-right,0px)) + 282px);bottom:calc(env(safe-area-inset-bottom,0px) + 64px);max-width:1180px;padding:8px 10px 8px}
@@ -97,7 +98,9 @@ body.specon #msg{bottom:auto;top:calc(env(safe-area-inset-top,0px) + 12px)}
 @media (max-width:1040px){body.specon #msg{top:calc(env(safe-area-inset-top,0px) + 150px)}}
 @media (max-width:560px){body.specon #hud-tl{display:none}body.specon #msg{top:calc(env(safe-area-inset-top,0px) + 8px)}#hud-br{bottom:calc(env(safe-area-inset-bottom,0px) + 74px)}#spec{bottom:calc(env(safe-area-inset-bottom,0px) + 90px + var(--brh,188px))}}
 
-#book,#quiz,#warp{z-index:1100}
+#book,#quiz,#warp,#veh{z-index:1100}
+#v-opts button{line-height:1.5}#v-opts i{display:inline-block;width:12px;height:12px;border-radius:2px;margin-right:8px;vertical-align:-1px}
+#v-opts b{color:var(--gold);font-weight:400}#v-opts em{font-style:normal;color:var(--ok);font-size:13px}#v-opts .d{color:var(--dim);font-size:13px}
 /* ピーク絞り込み（MS-DIAL の Peak spot navigator に合わせる） */
 #nav{position:fixed;right:max(12px,env(safe-area-inset-right,0px));top:calc(env(safe-area-inset-top,0px) + 176px);width:300px;box-sizing:border-box;
   max-height:calc(100dvh - 176px - 330px - env(safe-area-inset-top,0px));min-height:190px;overflow:auto;padding:0 0 10px;font-size:13px;z-index:20;touch-action:pan-y}
@@ -137,7 +140,8 @@ body.locked.fp #cross{display:block}
 #h-mouse{color:var(--dim);font-size:11.5px;margin-top:2px}
 @media (pointer:coarse){#h-mouse{display:none}}
 /* クリエイティブ飛行 */
-#h-fly{color:var(--gold);font-size:11.5px;margin-top:2px}
+#h-fly,#h-car{color:var(--gold);font-size:11.5px;margin-top:2px}
+#b-car[aria-pressed="true"]{background:var(--edge);color:#1a232b}
 .touch-only-i{display:none}
 @media (pointer:coarse){#h-fly .keys-only{display:none}.touch-only-i{display:inline}}
 /* マントで飛ぶ */
@@ -224,6 +228,7 @@ body.bookon #spec { display: none !important; }
   <div><span class="k">標高</span><span class="num" id="h-int">–</span></div>
   <div><span class="k">地層</span><span id="h-ont">–</span></div>
   <div id="h-mouse">クリックでマウス操作 · V 視点切替</div>
+  <div id="h-car" hidden></div>
   <div id="h-fly" hidden>飛行中 · <span class="keys-only">Space 上昇 · Shift 下降 · Space 2回で解除</span><span class="touch-only-i">上昇・下降ボタン · 地面に着くと解除</span></div>
 </div>
 <div id="hud-br" class="win">
@@ -247,6 +252,7 @@ body.bookon #spec { display: none !important; }
   <button id="b-book" class="win">図鑑<span class="kh"> (J)</span></button>
   <button id="b-spec" class="win" aria-pressed="true"><span class="lg">スペクトル</span><span class="sm">グラフ</span><span class="kh"> (E)</span></button>
   <button id="b-nav" class="win" aria-pressed="false" aria-controls="nav">絞り込み<span class="kh"> (N)</span></button>
+  <button id="b-car" class="win" aria-pressed="false">乗り物<span class="kh"> (R)</span></button>
   <button id="b-fly" class="win">マント<span class="kh"> (F)</span></button>
   <button id="b-menu" class="win">メニュー</button>
 </div>
@@ -298,6 +304,7 @@ body.bookon #spec { display: none !important; }
   <button class="r" data-k="r" aria-label="右を向く">▶</button>
   <button class="au" data-k="a" aria-label="上昇（地上で押すと飛ぶ）">上昇</button>
   <button class="ad" data-k="z" aria-label="下降">下降</button>
+  <button class="sl" data-k="c" aria-label="スライディング（押している間）">滑る</button>
 </div>
 
 <div id="start" class="modal">
@@ -326,10 +333,11 @@ body.bookon #spec { display: none !important; }
     </div>
     <p>山肌の色は、その山を作っているピークの化合物クラス（MS-DIAL の Ontology）。多いクラスから順に、上位 10 クラスに色が付きます（右上で変更可）。くすんだ色は low score の山です。山に登ると、画面の下にそのピークのEICとMS/MSが出ます。</p>
     <p class="keys keys-only">画面をクリックすると、マウスで向きを変えられます（マインクラフトと同じ。<kbd>Esc</kbd> で解除）<br>
-      <kbd>W</kbd><kbd>S</kbd> 前後　<kbd>A</kbd><kbd>D</kbd> 左右　<kbd>Space</kbd> ジャンプ（2回押すと空を飛ぶ。飛行中は <kbd>Space</kbd> 上昇・<kbd>Shift</kbd> 下降）<br><kbd>Shift</kbd> 走る　<kbd>V</kbd> 一人称・三人称　ホイールで距離　<kbd>←</kbd><kbd>→</kbd> 向き<br>
+      <kbd>W</kbd><kbd>S</kbd> 前後　<kbd>A</kbd><kbd>D</kbd> 左右　<kbd>Space</kbd> ジャンプ（2回押すと空を飛ぶ。飛行中は <kbd>Space</kbd> 上昇・<kbd>Shift</kbd> 下降）<br><kbd>Shift</kbd> 走る　<kbd>C</kbd> スライディング（押している間。下り坂ほど速い）　<kbd>V</kbd> 一人称・三人称　ホイールで距離　<kbd>←</kbd><kbd>→</kbd> 向き<br>
+      <kbd>R</kbd> 乗り物（4WD・月面バギー・モンスタートラック・ヘリコプター）に乗る・おりる。車は <kbd>W</kbd><kbd>S</kbd> アクセル・ブレーキ　<kbd>A</kbd><kbd>D</kbd> ハンドル　<kbd>Shift</kbd> ブースト　<kbd>Space</kbd> サイドブレーキ。ヘリは <kbd>Space</kbd> 上昇・<kbd>Shift</kbd> 下降<br>
       <kbd>F</kbd> マントで飛ぶ　<kbd>N</kbd> 絞り込み　<kbd>J</kbd> 図鑑　<kbd>E</kbd> スペクトル表示の切替　<kbd>M</kbd> 地図を大きく<br>
       地図はホイールで拡大・ドラッグで移動、クリックでスポット（ピーク）を選べます</p>
-    <p class="touch-only">▲▼◀▶ で移動、「上昇」で空を飛び「下降」で降りる、指でドラッグして視点、2本指で広げる・つまむとズーム。「マント」でアラインメントIDや RT・m/z を入れると、そこへ飛べます。右下の地図は2本指で拡大・1本指で移動、タップでスポットを選び「ここへ飛ぶ」で飛べます。</p>
+    <p class="touch-only">▲▼◀▶ で移動、「上昇」で空を飛び「下降」で降りる、「滑る」を押している間スライディング、「乗り物」で 4WD・月面バギー・モンスタートラック・ヘリコプターに乗りおり（車は ▲▼ アクセル・ブレーキ、◀▶ ハンドル。ヘリは「上昇」「下降」で高さ）、指でドラッグして視点、2本指で広げる・つまむとズーム。「マント」でアラインメントIDや RT・m/z を入れると、そこへ飛べます。右下の地図は2本指で拡大・1本指で移動、タップでスポットを選び「ここへ飛ぶ」で飛べます。</p>
     <p class="hint">ファイルはこのブラウザの中だけで読み込まれ、どこにも送信されません。</p>
   </div>
 </div>
@@ -356,6 +364,13 @@ body.bookon #spec { display: none !important; }
   <div id="w-err" aria-live="polite"></div>
   <p class="hint">右下の地図でスポットを選んで「ここへ飛ぶ」を押すか、地図をダブルクリック（ダブルタップ）しても、その場所へ飛べます。</p>
   <div class="btnrow"><button id="w-close">やめる (ESC)</button></div>
+</div></div>
+
+<div id="veh" class="modal" hidden><div class="win" role="dialog" aria-modal="true" aria-labelledby="v-title">
+  <h2 id="v-title">乗り物をえらぶ</h2>
+  <p class="hint">選ぶと足もとに呼びます。おりた乗り物はその場に停まり、近くで同じ乗り物を選ぶとまた乗れます。</p>
+  <div class="opts" id="v-opts"></div>
+  <div class="btnrow"><button id="v-close">やめる (ESC)</button></div>
 </div></div>
 
 <div id="book" class="modal" hidden><div class="win" role="dialog" aria-modal="true" aria-labelledby="bk-title">
@@ -968,7 +983,7 @@ legL.position.set(-0.17,0.3,0); legR.position.set(0.17,0.3,0);
 hero.add(body,head,hair,bag,legL,legR); scene.add(hero);
 
 /* ---------- 状態 ---------- */
-const P={x:0,z:0,y:0,h:0,dist:11,yawOff:0,pitch:0.42};
+const P={x:0,z:0,y:0,h:0,dist:11,yawOff:0,pitch:0.42,vx:0,vz:0,vy:0,air:false,slide:false,slideReq:false};
 const keys={};
 let playing=false, paused=false, t0=performance.now(), walkT=0, msgTimer=0;
 const LS="peakRidge.v2";
@@ -982,7 +997,7 @@ function enter(key){
   if(!worlds[key]) DS[key].view=filterRows(DS[key]);
   world=buildWorld(key); setScale(world.sc); scene.add(world.group); syncNav();
   for(const m of world.markers){ m.found=got(key).includes(m.id); paint(m); }
-  selectSpot(null); MV.s=1; MV.follow=true; clampMV();
+  selectSpot(null); MV.s=1; MV.follow=true; clampMV(); resetCar();
   // スタート地点：いちばん高い結晶の少し西
   const hi=world.markers.reduce((a,m)=>!a||m.r[3]>a.r[3]?m:a,null);
   P.x=hi?Math.max(2,hi.x-16):WX/4; P.z=hi?hi.z:WZ/2; P.h=Math.PI*0.5; P.yawOff=0;
@@ -1128,12 +1143,16 @@ document.addEventListener("change",e=>{ const t=e.target; if(t&&t.closest&&t.clo
 addEventListener("keydown",e=>{
   if(isTyping(e.target)){ if(e.key==="Escape"){ closeWarp(); e.target.blur(); } return; }
   if(!$("warp").hidden){ if(e.key==="Escape"||e.key==="f"||e.key==="F") closeWarp(); return; }
+  if(!$("veh").hidden){ const n=+e.key; if(n>=1&&n<=VEH.length){ closeVeh(); board(VEH[n-1]); }
+    else if(e.key==="Escape"||e.key==="r"||e.key==="R") closeVeh(); return; }
   if(e.key==="f"||e.key==="F"){ openWarp(); return; }
   if((e.key==="n"||e.key==="N")&&playing){ toggleNav(); return; }
   if((e.key==="m"||e.key==="M")&&playing){ setBigMap(!MV.big); return; }
+  if((e.key==="r"||e.key==="R")&&playing){ toggleCar(); return; }
+  if(e.code==="KeyC"&&!e.repeat) P.slideReq=true;
   if((e.key==="v"||e.key==="V")&&playing){ camMode=camMode==="first"?"third":"first"; lookPitch=0; lockHint(); return; }
   if(e.code==="Space"){ e.preventDefault(); if(document.activeElement&&document.activeElement.tagName==="BUTTON") document.activeElement.blur();
-    keys.Space=true; if(e.repeat||!playing||paused||fly) return;
+    keys.Space=true; if(e.repeat||!playing||paused||fly||car.on) return;   // 車では Space はサイドブレーキ
     const t=performance.now();
     if(t-lastSpace<380){ lastSpace=0; setHover(!hover); return; }
     lastSpace=t;
@@ -1147,9 +1166,10 @@ addEventListener("keydown",e=>{
 addEventListener("keyup",e=>{keys[e.code]=false; if(e.code==="Space"&&!isTyping(e.target)) e.preventDefault();});
 addEventListener("blur",()=>{for(const k in keys) keys[k]=false});
 document.querySelectorAll("#pad button").forEach(b=>{
-  const k={f:"ArrowUp",b:"ArrowDown",l:"ArrowLeft",r:"ArrowRight",a:"Space",z:"ShiftLeft"}[b.dataset.k];
+  const k={f:"ArrowUp",b:"ArrowDown",l:"ArrowLeft",r:"ArrowRight",a:"Space",z:"ShiftLeft",c:"KeyC"}[b.dataset.k];
   b.addEventListener("pointerdown",e=>{e.preventDefault();keys[k]=true;b.setPointerCapture(e.pointerId);
-    if(b.dataset.k==="a"&&playing&&!paused&&!fly&&!hover) setHover(true);});
+    if(b.dataset.k==="a"&&playing&&!paused&&!fly&&!hover&&!car.on) setHover(true);
+    if(b.dataset.k==="c") P.slideReq=true;});
   const up=()=>keys[k]=false; b.addEventListener("pointerup",up); b.addEventListener("pointercancel",up);
 });
 let camMode="third", lookPitch=0, locked=false, noLock=false;
@@ -1163,7 +1183,7 @@ document.addEventListener("pointerlockchange",()=>{
 document.addEventListener("pointerlockerror",()=>{ noLock=true; lockHint(); });
 document.addEventListener("mousemove",e=>{
   if(!locked||paused) return;
-  P.h-=e.movementX*0.0025;
+  if(car.on) P.yawOff-=e.movementX*0.0025; else P.h-=e.movementX*0.0025;
   if(camMode==="first") lookPitch=Math.max(-1.45,Math.min(1.45,lookPitch-e.movementY*0.0025));
   else P.pitch=Math.max(0.08,Math.min(1.25,P.pitch+e.movementY*0.0025));
 });
@@ -1251,6 +1271,7 @@ function rebuildWorld(){
   for(const m of world.markers){ m.found=got(key).includes(m.id); paint(m); }
   P.x=keep.x; P.z=keep.z; P.h=keep.h; P.vy=0; P.air=false;
   selectSpot(sel?world.rows.find(r=>r[0]===sel.id):null);
+  if(car.parked) car.v.g.position.y=world.hAt(car.x,car.z);
   updateProg(); lastOwner="reload"; labelKey=""; syncNav(); renderLegend();
 }
 function applyNav(){
@@ -1347,6 +1368,8 @@ function setHover(on){
 }
 function flyTo(x,z,label,row){
   if(hover) setHover(false);
+  if(car.on) exitCar(true);
+  P.slide=false;
   if(!world||!playing) return;
   x=Math.max(0,Math.min(WX,x)); z=Math.max(0,Math.min(WZ,z));
   const d=Math.hypot(x-P.x,z-P.z); let top=0;
@@ -1371,7 +1394,7 @@ function stepFly(dt,tt){
   if(u>=1) landFly(false);
 }
 function landFly(silent){
-  const f=fly; fly=null; flyPitch=0; hero.rotation.x=0; cape.visible=false; P.vy=0; P.air=false;
+  const f=fly; fly=null; flyPitch=0; hero.rotation.x=0; cape.visible=false; P.vy=0; P.vx=P.vz=0; P.air=false;
   if(!f||silent) return;
   P.x=f.tx; P.z=f.tz; P.y=f.ty; lastOwner="reload";
   const r=f.row||nearestRow(f.tx,f.tz), nm=r?statusOf(world.ds.names[r[0]]||"").label:"";
@@ -1408,6 +1431,284 @@ $("w-xy").onsubmit=e=>{ e.preventDefault();
   closeWarp(); flyTo(toX(rt),toZ(mz),`RT ${+rt.toFixed(3)} min · m/z ${+mz.toFixed(4)}`);
 };
 
+/* ---------- 物理：重力・スライディング・4WD ----------
+   歩きも車も、地面が重力で落ちるより速く下がると宙に浮く（tick の上下の動き）。
+   P.vx,P.vz は水平の速度。空中やスライディング中は勢いが残る。 */
+const G=26;
+function moveXZ(dt){
+  const nx=P.x+P.vx*dt, nz=P.z+P.vz*dt;
+  P.x=Math.max(0,Math.min(WX,nx)); P.z=Math.max(0,Math.min(WZ,nz));
+  if(P.x!==nx) P.vx=0;
+  if(P.z!==nz) P.vz=0;
+  return P.x!==nx||P.z!==nz;
+}
+// 斜面の勾配（高さの x・z 方向の傾き）
+function slopeAt(x,z){ const e=0.6; return [(world.hAt(x+e,z)-world.hAt(x-e,z))/(2*e),(world.hAt(x,z+e)-world.hAt(x,z-e))/(2*e)]; }
+// 着地：速度のうち斜面に垂直な成分だけを消し、残りは斜面に沿った勢いにする（落ちた勢いで下り坂を加速する）。
+// 戻り値は斜面にぶつかった速さ（負）
+function landOnSlope(){
+  const [gx,gz]=slopeAt(P.x,P.z), n=Math.sqrt(1+gx*gx+gz*gz), nx=-gx/n, ny=1/n, nz=-gz/n;
+  const d=P.vx*nx+P.vy*ny+P.vz*nz, h0=Math.hypot(P.vx,P.vz);
+  if(d<0){ P.vx-=d*nx; P.vy-=d*ny; P.vz-=d*nz; }
+  // 峰のあいだの谷（V 字）に正面から落ちても止まらないよう、水平の勢いは 85% までしか減らさない
+  const h1=Math.hypot(P.vx,P.vz);
+  if(h1<h0*0.85&&h0>0.1){ const f=h0*0.85/(h1||1e-6); if(h1>1e-3){ P.vx*=f; P.vz*=f; } }
+  if(car.on) car.speed=P.vx*Math.sin(P.h)+P.vz*Math.cos(P.h);
+  return d;
+}
+function startSlide(){
+  P.slide=true;
+  if(Math.hypot(P.vx,P.vz)<10){ P.vx=Math.sin(P.h)*10; P.vz=Math.cos(P.h)*10; }   // その場からでも勢いよく滑り出す
+}
+function stepSlide(dt,fw){
+  const held=!!keys.KeyC;
+  if(!P.air){
+    // 斜面に沿った重力 g·sinθ で下り坂ほど速くなる（速さは斜面に沿った速さとして扱う）
+    const [gx,gz]=slopeAt(P.x,P.z), k=G/Math.sqrt(1+gx*gx+gz*gz);
+    P.vx-=gx*k*dt; P.vz-=gz*k*dt;
+    const d=Math.exp(-(held?0.35:2.8)*dt); P.vx*=d; P.vz*=d;          // 摩擦（ボタンを離すとすぐ止まる）
+    if(fw>0){ const sp=Math.hypot(P.vx,P.vz)||1; P.vx+=P.vx/sp*5*dt; P.vz+=P.vz/sp*5*dt; }
+  }
+  // ハンドル（A/D・←→）で滑る向きを変える
+  const turn=((keys.KeyA||keys.ArrowLeft)?1:0)-((keys.KeyD||keys.ArrowRight)?1:0);
+  if(turn){ const a=turn*1.8*dt, c=Math.cos(a), s=Math.sin(a), vx=P.vx; P.vx=vx*c+P.vz*s; P.vz=P.vz*c-vx*s; }
+  let sp=Math.hypot(P.vx,P.vz);
+  if(sp>45){ P.vx*=45/sp; P.vz*=45/sp; sp=45; }
+  if(sp>1){ let dh=Math.atan2(P.vx,P.vz)-P.h; dh=Math.atan2(Math.sin(dh),Math.cos(dh)); P.h+=dh*Math.min(1,dt*8); }
+  if(!P.air&&sp<1.5) P.slide=false;   // 止まったら立ち上がる
+}
+
+/* ---------- 乗り物 ----------
+   R（または「乗り物」ボタン）で選ぶ。地面を走る乗り物（kind:"car"）は4輪の下の地面の高さから車体の傾きを決め、
+   ヘリコプター（kind:"heli"）は Space で上昇・Shift で下降して自由に飛ぶ。
+   おりた乗り物はその場に停めておき（地図にも出す）、近くで同じ乗り物を選ぶとまた乗れる。 */
+const lam=c=>new THREE.MeshLambertMaterial({color:c});
+const VM={black:lam(0x23282d),glass:lam(0x34505e),metal:lam(0xbfc6ca),white:lam(0xf2f2ee),gold:lam(0xd4a52a),grey:lam(0x8d949a),
+  lamp:new THREE.MeshBasicMaterial({color:0xfff4d2}),tail:new THREE.MeshBasicMaterial({color:0xd23f57})};
+const addBox=(p,w,h,d,m,x,y,z)=>{ const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m); o.position.set(x,y,z); p.add(o); return o; };
+const addCyl=(p,r0,r1,h,m,x,y,z,rx=0,rz=0)=>{ const o=new THREE.Mesh(new THREE.CylinderGeometry(r0,r1,h,16),m); o.position.set(x,y,z); o.rotation.set(rx,0,rz); p.add(o); return o; };
+// 運転手（右ハンドル。three.js では進む向き +z の右手が -x）。宇宙服ならヘルメットに金のバイザー
+function makeDriver(suit){
+  const d=new THREE.Group();
+  d.add(new THREE.Mesh(new THREE.CylinderGeometry(0.3,0.36,0.6,10),suit?VM.white:coat));
+  if(suit){
+    const hm=new THREE.Mesh(new THREE.SphereGeometry(0.34,16,12),VM.white); hm.position.y=0.58; d.add(hm);
+    const vz=new THREE.Mesh(new THREE.SphereGeometry(0.3,16,10,-0.9,1.8,0.7,1.2),VM.gold); vz.position.set(0,0.58,0.07); d.add(vz);
+  }else{
+    const hd=new THREE.Mesh(new THREE.SphereGeometry(0.28,14,10),skin); hd.position.y=0.55; d.add(hd);
+    const hr=new THREE.Mesh(new THREE.SphereGeometry(0.3,14,10,0,Math.PI*2,0,Math.PI/2),dark); hr.position.y=0.59; d.add(hr);
+  }
+  return d;
+}
+// タイヤ（前輪はハンドルで向きが変わる。スポークで回転が見える）
+function addWheels(v,g,pos,w,tireM,hubM){
+  v.wheels=[];
+  for(const [x,z] of pos){
+    const piv=new THREE.Group(), spin=new THREE.Group(); piv.position.set(x,v.r,z);
+    addCyl(spin,v.r,v.r,w,tireM,0,0,0,0,Math.PI/2);
+    addCyl(spin,v.r*0.45,v.r*0.45,w+0.02,hubM,0,0,0,0,Math.PI/2);
+    addBox(spin,w+0.03,v.r*0.2,v.r*1.25,hubM,0,0,0);
+    piv.add(spin); g.add(piv); v.wheels.push({piv,spin,x,z,front:z>0});
+  }
+  v.pts=pos;
+}
+const VEH=[
+  {key:"4wd",name:"4WD",desc:"オフロード車。急な坂もブーストで登れる",kind:"car",color:"#e39a1e",
+    grav:G,accel:18,boost:28,max:32,maxBoost:46,rev:12,steer:0.55,base:2.6,track:2.12,r:0.5,susp:0.3,bounce:0.25,launch:16,cam:14,look:2,eye:[-0.45,2.05],
+    build(v,g){
+      const paint=lam(0xe39a1e);
+      addBox(g,2.0,0.72,3.9,paint,0,1.02,0);           // 車体
+      addBox(g,1.84,0.72,2.0,VM.glass,0,1.74,-0.35);   // 窓
+      addBox(g,1.92,0.1,2.08,paint,0,2.12,-0.35);      // 屋根
+      addBox(g,1.7,0.12,1.6,VM.black,0,2.26,-0.4);     // ルーフキャリア
+      addBox(g,2.16,0.3,0.3,VM.black,0,0.74,2.0); addBox(g,2.16,0.3,0.3,VM.black,0,0.74,-2.0);
+      for(const z of [1.3,-1.3]) for(const x of [1.06,-1.06]) addBox(g,0.34,0.14,1.3,VM.black,x,1.08,z);
+      for(const x of [0.66,-0.66]){ addBox(g,0.36,0.2,0.06,VM.lamp,x,1.12,1.96); addBox(g,0.3,0.16,0.06,VM.tail,x*1.1,1.12,-1.96); }
+      addCyl(g,0.44,0.44,0.3,VM.black,0,1.28,-2.12,Math.PI/2);
+      v.driver=makeDriver(false); v.driver.position.set(-0.45,1.45,-0.2); g.add(v.driver);
+      addWheels(v,g,[[1.06,1.3],[-1.06,1.3],[1.06,-1.3],[-1.06,-1.3]],0.44,VM.black,VM.metal);
+    }},
+  {key:"moon",name:"月面バギー",desc:"月の重力（1/6）で走る。ふわっと大ジャンプ",kind:"car",color:"#d4a52a",
+    grav:G/6,accel:10,boost:16,max:22,maxBoost:30,rev:8,steer:0.6,base:2.4,track:2.3,r:0.55,susp:0.45,bounce:0.45,launch:12,cam:14,look:2,eye:[-0.45,1.95],
+    build(v,g){
+      addBox(g,2.0,0.12,3.0,VM.gold,0,0.95,0);                       // 金色の断熱シートの車台
+      for(const x of [0.9,-0.9]){ addBox(g,0.08,0.08,3.0,VM.metal,x,1.05,0); addBox(g,0.08,0.08,1.6,VM.metal,x,1.95,-0.2); }
+      for(const x of [0.9,-0.9]) for(const z of [0.6,-1.0]) addBox(g,0.08,0.9,0.08,VM.metal,x,1.5,z);   // パイプのフレーム
+      for(const x of [0.45,-0.45]){ addBox(g,0.6,0.12,0.6,VM.grey,x,1.12,-0.2); addBox(g,0.6,0.6,0.1,VM.grey,x,1.4,-0.5); }   // 座席
+      for(const z of [1.2,-1.2]) for(const x of [1.15,-1.15]) addBox(g,0.42,0.06,1.1,VM.metal,x,1.25,z);   // フェンダー
+      addCyl(g,0.04,0.04,1.3,VM.metal,0,1.65,1.1);                     // アンテナの柱
+      const dish=new THREE.Mesh(new THREE.SphereGeometry(0.55,16,8,0,Math.PI*2,0,0.9),VM.white);
+      dish.position.set(0,2.35,1.1); dish.rotation.x=-0.6; g.add(dish);
+      addBox(g,0.3,0.22,0.3,VM.grey,0,1.2,1.25);                       // カメラ箱
+      v.driver=makeDriver(true); v.driver.position.set(-0.45,1.4,-0.2); g.add(v.driver);
+      addWheels(v,g,[[1.15,1.2],[-1.15,1.2],[1.15,-1.2],[-1.15,-1.2]],0.36,VM.grey,VM.gold);
+    }},
+  {key:"monster",name:"モンスタートラック",desc:"大きなタイヤで峰も乗りこえる。よく跳ねる",kind:"car",color:"#d23f57",
+    grav:G,accel:22,boost:32,max:30,maxBoost:44,rev:12,steer:0.5,base:3.2,track:3.0,r:1.15,susp:0.6,bounce:0.4,launch:18,cam:18,look:3.2,eye:[-0.5,3.6],
+    build(v,g){
+      const paint=lam(0xd23f57);
+      addBox(g,1.0,0.3,3.6,VM.black,0,1.3,0);                          // 下回り
+      for(const z of [1.6,-1.6]) addBox(g,2.8,0.18,0.18,VM.black,0,1.15,z);   // 車軸
+      addBox(g,2.4,0.9,4.2,paint,0,2.35,0);                            // 車体
+      addBox(g,2.1,0.8,1.9,VM.glass,0,3.2,-0.3); addBox(g,2.2,0.1,2.0,paint,0,3.65,-0.3);
+      for(const x of [0.75,-0.75]){ addBox(g,0.4,0.22,0.06,VM.lamp,x,2.5,2.11); addBox(g,0.32,0.18,0.06,VM.tail,x,2.5,-2.11); }
+      addBox(g,1.6,0.14,0.14,VM.lamp,0,3.78,0.5);                       // 屋根のライト
+      v.driver=makeDriver(false); v.driver.position.set(-0.5,2.9,-0.25); g.add(v.driver);
+      addWheels(v,g,[[1.5,1.6],[-1.5,1.6],[1.5,-1.6],[-1.5,-1.6]],0.9,VM.black,VM.metal);
+    }},
+  {key:"heli",name:"ヘリコプター",desc:"Space で上昇・Shift で下降。空から山脈を見わたす",kind:"heli",color:"#3b7fc4",
+    max:40,base:2.2,track:1.7,cam:18,look:2,eye:[-0.35,2.25],
+    build(v,g){
+      const paint=lam(0x3b7fc4);
+      const body=new THREE.Mesh(new THREE.SphereGeometry(1.2,18,14),paint); body.scale.set(1,0.85,1.45); body.position.y=1.65; g.add(body);
+      const win=new THREE.Mesh(new THREE.SphereGeometry(1.0,18,12,-1.2,2.4,0.5,1.3),VM.glass); win.scale.set(1.08,0.95,1.5); win.position.set(0,1.75,0.12); g.add(win);
+      addCyl(g,0.16,0.32,3.8,paint,0,1.95,-2.9,Math.PI/2);            // テールブーム
+      addBox(g,0.1,1.0,0.7,paint,0,2.35,-4.7);                          // 尾翼
+      addCyl(g,0.08,0.08,0.7,VM.grey,0,2.75,0);                         // マスト
+      v.rotor=new THREE.Group(); v.rotor.position.y=3.1;
+      addBox(v.rotor,8,0.05,0.3,VM.black,0,0,0); addBox(v.rotor,0.3,0.05,8,VM.black,0,0,0); g.add(v.rotor);
+      v.trotor=new THREE.Group(); v.trotor.position.set(0.14,2.4,-4.7);
+      addBox(v.trotor,0.04,1.3,0.14,VM.black,0,0,0); addBox(v.trotor,0.04,0.14,1.3,VM.black,0,0,0); g.add(v.trotor);
+      for(const x of [0.9,-0.9]){ addCyl(g,0.07,0.07,3.2,VM.grey,x,0.1,0.1,Math.PI/2);
+        for(const z of [0.8,-0.6]) addBox(g,0.06,0.65,0.06,VM.grey,x*0.85,0.42,z); }   // そり
+      v.driver=makeDriver(false); v.driver.position.set(-0.35,1.35,0.35); g.add(v.driver);
+      v.pts=[[0.9,1.2],[-0.9,1.2],[0.9,-1.1],[-0.9,-1.1]];
+    }},
+];
+for(const v of VEH){ v.g=new THREE.Group(); v.g.rotation.order="YXZ"; v.g.visible=false; v.build(v,v.g); scene.add(v.g); }
+const car={on:false,parked:false,v:VEH[0],speed:0,steer:0,spin:0,rotor:0,pitch:0,roll:0,x:0,z:0,h:0,hs:[0,0,0,0]};
+
+// 4点（タイヤ・そり）の下の地面の高さ。乗り物の高さはその平均（真ん中が尖っていたら持ち上げる）
+function carGround(){
+  const c=Math.cos(P.h), s=Math.sin(P.h);
+  car.hs=car.v.pts.map(([x,z])=>world.hAt(Math.max(0,Math.min(WX,P.x+x*c+z*s)),Math.max(0,Math.min(WZ,P.z-x*s+z*c))));
+  const avg=(car.hs[0]+car.hs[1]+car.hs[2]+car.hs[3])/4;
+  return Math.max(avg,world.hAt(P.x,P.z)-0.7);
+}
+const thrKey=()=>keys.KeyW||keys.ArrowUp, brkKey=()=>keys.KeyS||keys.ArrowDown;
+const steerKey=()=>((keys.KeyA||keys.ArrowLeft)?1:0)-((keys.KeyD||keys.ArrowRight)?1:0);
+function stepCar(dt){
+  const v=car.v, thr=thrKey(), brk=brkKey(), boost=keys.ShiftLeft||keys.ShiftRight;
+  car.steer+=(steerKey()*v.steer-car.steer)*Math.min(1,dt*6);
+  if(!P.air){
+    let a=0;
+    if(thr) a+=boost?v.boost:v.accel;
+    if(brk) a-=car.speed>0.5?34:10;                      // 止まっていればバック
+    // 坂：進む向きの勾配で重力がかかる
+    const gr=((car.hs[0]+car.hs[1])-(car.hs[2]+car.hs[3]))/2/v.base;
+    a-=v.grav*0.75*gr/Math.sqrt(1+gr*gr);
+    a-=car.speed*0.3+(thr||brk?0:Math.sign(car.speed)*3);   // 転がり抵抗・空気抵抗
+    if(keys.Space) a-=Math.sign(car.speed)*28;            // サイドブレーキ
+    const before=car.speed; car.speed+=a*dt;
+    if(!thr&&!brk&&Math.sign(car.speed)!==Math.sign(before)&&Math.abs(gr)<0.15) car.speed=0;
+    if(keys.Space&&Math.abs(car.speed)<1) car.speed=0;
+    car.speed=Math.max(-v.rev,Math.min(boost?v.maxBoost:v.max,car.speed));
+    P.h+=car.speed*Math.tan(car.steer)/v.base*dt;
+  }
+  P.vx=Math.sin(P.h)*car.speed; P.vz=Math.cos(P.h)*car.speed;
+  if(moveXZ(dt)) car.speed*=-0.3;                          // 大陸の端で跳ね返る
+  car.spin+=car.speed*dt/v.r;
+  return Math.abs(car.speed)>0.5?1:0;
+}
+// ヘリ：W/S 前後、A/D 旋回、Space 上昇、Shift 下降。高さは自分で決める（重力の計算はしない）
+function stepHeli(dt){
+  const v=car.v, fwd=(thrKey()?1:0)-(brkKey()?1:0), turn=steerKey();
+  const up=(keys.Space?1:0)-(keys.ShiftLeft||keys.ShiftRight?1:0), gy=carGround(), landed=P.y<=gy+0.05;
+  car.rotor+=(((up>0||!landed||fwd)?1:0.3)-car.rotor)*Math.min(1,dt*1.2);   // ローターの回転（離陸前に回り始める）
+  const lift=car.rotor>0.8;
+  if(landed&&up<=0) car.speed*=Math.exp(-5*dt);
+  else { car.speed+=fwd*20*dt; car.speed-=car.speed*0.35*dt; }
+  car.speed=Math.max(-12,Math.min(v.max,car.speed));
+  P.h+=turn*(landed?0.6:1.6)*dt;
+  P.vy+=((lift?up*14:-4)-P.vy)*Math.min(1,dt*3);
+  P.y=Math.min(170,P.y+P.vy*dt);
+  if(P.y<=gy){ P.y=gy; if(P.vy<0) P.vy=0; }
+  P.air=false;
+  P.vx=Math.sin(P.h)*car.speed; P.vz=Math.cos(P.h)*car.speed;
+  if(moveXZ(dt)) car.speed=0;
+  car.turn=turn;
+  return Math.abs(car.speed)>0.5||up?1:0;
+}
+function poseCar(dt){
+  const v=car.v, hs=car.hs, fr=(hs[0]+hs[1])/2, bk=(hs[2]+hs[3])/2, lf=(hs[0]+hs[2])/2, rt=(hs[1]+hs[3])/2;
+  const gp=-Math.atan2(fr-bk,v.base*0.99), grl=Math.atan2(lf-rt,v.track);   // 地面に合わせた傾き（+x 回転で前が下がる）
+  let tp, tr, k;
+  if(v.kind==="heli"){
+    const landed=P.y<=carGround()+0.05;
+    // 飛んでいるときは進む向きに前のめり、曲がる向きに傾く
+    tp=landed?gp:car.speed/v.max*0.35; tr=landed?grl:-(car.turn||0)*0.3*Math.min(1,Math.abs(car.speed)/10+0.3); k=Math.min(1,dt*4);
+    v.rotor.rotation.y+=car.rotor*dt*28; v.trotor.rotation.x+=car.rotor*dt*40;
+  }else{
+    // 空中では進む向きに機首を向け、地上では地面に合わせる
+    tp=P.air?-Math.atan2(P.vy,Math.max(6,Math.abs(car.speed)))*0.6:gp;
+    tr=P.air?car.roll*0.9:grl; k=Math.min(1,dt*(P.air?3:12));
+  }
+  car.pitch+=(tp-car.pitch)*k; car.roll+=(tr-car.roll)*k;
+  v.g.position.set(P.x,P.y,P.z); v.g.rotation.set(car.pitch,P.h,car.roll);
+  if(v.wheels) v.wheels.forEach((w,i)=>{
+    // サスペンション：車体の面と地面の差だけタイヤを上下させる
+    const plane=P.y-w.z*Math.sin(car.pitch)+w.x*Math.sin(car.roll);
+    w.piv.position.y=v.r+(P.air?-v.susp*0.7:Math.max(-v.susp,Math.min(v.susp,hs[i]-plane)));
+    w.piv.rotation.y=w.front?car.steer:0; w.spin.rotation.x=car.spin;
+  });
+}
+function vehHelp(v,touch){
+  if(v.kind==="heli") return touch?"上昇・下降ボタンで高さ、▲▼ 前後、◀▶ 旋回":"Space 上昇　Shift 下降　W/S 前後　A/D 旋回　R でおりる（着陸してから）";
+  return touch?"▲▼ でアクセル・ブレーキ、◀▶ でハンドル":"W/S アクセル・ブレーキ　A/D ハンドル　Shift ブースト　Space サイドブレーキ　R でおりる";
+}
+function board(v){
+  if(!playing||fly||!world) return;
+  if(hover) setHover(false);
+  const near=car.parked&&car.v===v&&Math.hypot(car.x-P.x,car.z-P.z)<8;
+  if(car.v!==v) car.v.g.visible=false;   // ほかの乗り物を停めていたら片付ける
+  car.v=v;
+  if(near){ P.x=car.x; P.z=car.z; P.h=car.h; }   // 近くに停めてあればそれに乗る。なければ足もとに呼ぶ
+  car.on=true; car.parked=false; car.speed=0; car.steer=0; car.rotor=0.3; car.turn=0; P.slide=false;
+  P.vx=P.vz=P.vy=0; P.air=false; P.y=carGround(); car.pitch=car.roll=0; poseCar(1); v.g.visible=true;
+  const touch=matchMedia("(pointer:coarse)").matches;
+  $("h-car").textContent=`${v.name} に乗っています · ${vehHelp(v,touch)}`; $("h-car").hidden=false;
+  $("b-car").setAttribute("aria-pressed",true); lastOwner="reload";
+  showMsg(`<div class="t">${esc(v.name)} に乗った！</div><div class="row">${esc(vehHelp(v,touch))}${touch?"。「乗り物」でおりる":""}</div>`);
+}
+// force：マントで飛ぶときなど、空中でもその場（真下の地面）に停めておりる
+function exitCar(force){
+  if(!car.on) return;
+  const v=car.v, gy=carGround();
+  if(v.kind==="heli"&&P.y>gy+0.6&&!force){ showMsg(`<div class="t">着陸してからおりてね</div><div class="row">${matchMedia("(pointer:coarse)").matches?"「下降」":"Shift"} で地面までおりられます</div>`); return; }
+  if(P.air||P.y>gy){ P.air=false; P.vy=0; P.y=gy; car.rotor=0; poseCar(1); }   // 空中なら真下に停める
+  car.on=false; car.parked=true; car.x=P.x; car.z=P.z; car.h=P.h; car.speed=0;
+  const c=Math.cos(P.h), s=Math.sin(P.h), side=v.track/2+1.4;   // 運転席側（右）におりる
+  P.x=Math.max(0,Math.min(WX,P.x-c*side)); P.z=Math.max(0,Math.min(WZ,P.z+s*side));
+  P.y=world.hAt(P.x,P.z); P.vx=P.vz=P.vy=0; $("msg").hidden=true; msgTimer=0;
+  $("h-car").hidden=true; $("b-car").setAttribute("aria-pressed",false);
+}
+function resetCar(){
+  for(const v of VEH) v.g.visible=false;
+  car.on=car.parked=false; P.slide=false; P.vx=P.vz=0;
+  $("h-car").hidden=true; $("b-car").setAttribute("aria-pressed",false);
+}
+// 乗り物をえらぶ窓
+function openVeh(){
+  if(!playing||!world||fly||!$("quiz").hidden||!$("book").hidden||!$("start").hidden||!$("warp").hidden) return;
+  const box=$("v-opts"); box.innerHTML="";
+  VEH.forEach((v,i)=>{
+    const b=document.createElement("button"), near=car.parked&&car.v===v&&Math.hypot(car.x-P.x,car.z-P.z)<8;
+    b.innerHTML=`<i style="background:${v.color}"></i><span class="kh">${i+1} </span><b>${esc(v.name)}</b>${near?" <em>（近くに停めてある）</em>":""}<br><span class="d">${esc(v.desc)}</span>`;
+    b.onclick=()=>{ closeVeh(); board(v); };
+    box.append(b);
+  });
+  $("msg").hidden=true; msgTimer=0; exitLock(); $("veh").hidden=false; paused=true;
+  if(matchMedia("(pointer:fine)").matches) box.firstChild.focus();
+}
+function closeVeh(){ if($("veh").hidden) return; $("veh").hidden=true; paused=false; if(document.activeElement) document.activeElement.blur(); }
+function toggleCar(){
+  if(!playing||!world) return;
+  if(car.on){ if(!P.air) exitCar(); return; }
+  $("veh").hidden?openVeh():closeVeh();
+}
+$("b-car").onclick=e=>{ e.currentTarget.blur(); toggleCar(); };
+$("v-close").onclick=closeVeh;
+
 /* ---------- ループ ---------- */
 function resize(){ const w=innerWidth,h=innerHeight; renderer.setSize(w,h,false); camera.aspect=w/h; camera.updateProjectionMatrix(); }
 addEventListener("resize",resize); resize();
@@ -1420,10 +1721,13 @@ function tick(now){
   if(!$("start").hidden){ $("book").hidden=true; $("quiz").hidden=true; }
   const active=playing&&!paused&&!fly;
   let moving=0;
-  if(active){
+  if(active&&car.on) moving=car.v.kind==="heli"?stepHeli(dt):stepCar(dt);
+  else if(active){
     const run=hover?2.2:(keys.ShiftLeft||keys.ShiftRight?2:1);
-    if(keys.ArrowLeft) P.h+=2.2*dt;
-    if(keys.ArrowRight) P.h-=2.2*dt;
+    if(!P.slide){
+      if(keys.ArrowLeft) P.h+=2.2*dt;
+      if(keys.ArrowRight) P.h-=2.2*dt;
+    }
     let fw=0, sd=0;
     if(keys.KeyW||keys.ArrowUp) fw+=1;
     if(keys.KeyS||keys.ArrowDown) fw-=0.6;
@@ -1431,24 +1735,42 @@ function tick(now){
     if(keys.KeyD) sd-=0.85;
     if(fw||sd){
       moving=fw<0&&!sd?-0.6:1;
-      const sp=12*run*dt, c=Math.cos(P.h), s=Math.sin(P.h);
-      P.x=Math.max(0,Math.min(WX,P.x+(s*fw+c*sd)*sp));
-      P.z=Math.max(0,Math.min(WZ,P.z+(c*fw-s*sd)*sp));
       walkT+=dt*9*run*Math.max(Math.abs(fw),Math.abs(sd));
     }
+    // 歩きたい速度。地上ではそのまま、空中では勢いが残り少しだけ向きを変えられる
+    const c=Math.cos(P.h), s=Math.sin(P.h), wx=(s*fw+c*sd)*12*run, wz=(c*fw-s*sd)*12*run;
+    if(P.slideReq&&!P.slide&&!P.air&&!hover) startSlide();
+    P.slideReq=false;
+    if(P.slide){ stepSlide(dt,fw); moving=1; }
+    else if(P.air&&!hover){ const k=Math.min(1,dt*1.5); P.vx+=(wx-P.vx)*k; P.vz+=(wz-P.vz)*k; }
+    else { P.vx=wx; P.vz=wz; }
+    moveXZ(dt);
     if(moving&&P.yawOff) P.yawOff*=Math.pow(0.15,dt);  // 歩くと視点が背後に戻る
   }
   if(fly&&!paused) stepFly(dt,now/1000);
-  const gy=world.hAt(P.x,P.z);
+  const gy=car.on?carGround():world.hAt(P.x,P.z);
   if(!fly&&hover&&!paused){
     const v=(keys.Space?1:0)-(keys.ShiftLeft||keys.ShiftRight?1:0);
     P.y=Math.min(160,P.y+v*16*dt);
     if(P.y<=gy){ P.y=gy; if(v<0) setHover(false); }   // 下降して地面に着いたら歩きに戻る
-  }else if(!fly){
-    if(P.air){ P.vy-=26*dt; P.y+=P.vy*dt; if(P.y<=gy){ P.y=gy; P.vy=0; P.air=false; } }
-    else P.y+=(gy-P.y)*Math.min(1,dt*14);
+  }else if(!fly&&!paused&&!(car.on&&car.v.kind==="heli")){
+    const gv=car.on?car.v.grav:G;   // 月面バギーは月の重力
+    if(P.air){
+      P.vy-=gv*dt; P.y+=P.vy*dt;
+      if(P.y<=gy){ P.y=gy; P.air=false;
+        const hit=landOnSlope();
+        // 車は強く着地すると少し跳ねる
+        if(car.on&&hit<-8){ P.vy=-hit*car.v.bounce; P.air=true; P.y=gy+0.01; } }
+    }else{
+      // 地面が重力で落ちるより速く下がったら、地面から離れて宙に浮く（峰の向こう側へ飛び出す）。
+      // スライディング中は地面に張りつきやすくする（小さなこぶでは跳ねない）
+      const yp=P.y+P.vy*dt-0.5*gv*dt*dt;
+      if(gy<yp-(P.slide?0.35:0.08)){ P.air=true; P.vy-=gv*dt; P.y=yp; }
+      else{ P.vy=Math.max(-40,Math.min(car.on?car.v.launch:P.slide?2.5:6,(gy-P.y)/Math.max(dt,1e-3))); P.y=gy; }
+    }
   }
-  hero.position.set(P.x,P.y,P.z); hero.rotation.y=P.h; hero.rotation.x=fly?flyPitch:hover&&moving?0.45:0;
+  if(car.on) poseCar(dt);
+  hero.position.set(P.x,P.y,P.z); hero.rotation.y=P.h; hero.rotation.x=fly?flyPitch:P.slide?-0.55:hover&&moving?0.45:0;
   if(hover){ // 浮いている間はマントがゆっくりなびく
     cape.visible=!(camMode==="first"&&playing);
     const a=capeGeo.attributes.position.array, tt=now/1000, k=moving?0.7:0.25;
@@ -1458,25 +1780,30 @@ function tick(now){
   }
   // 高く飛ぶほど遠くまで見える
   scene.fog.near=90+Math.max(0,P.y-15)*2; scene.fog.far=360+Math.max(0,P.y-15)*4;
-  const sw=moving&&!hover?Math.sin(walkT)*0.55:0;
-  legL.rotation.x=sw; legR.rotation.x=-sw; body.position.y=1.15+(moving?Math.abs(Math.sin(walkT))*0.06:0);
+  const sw=moving&&!hover&&!P.slide&&!P.air?Math.sin(walkT)*0.55:0;
+  if(P.slide){ legL.rotation.x=legR.rotation.x=-1.25; }        // 足を前に投げ出して滑る
+  else if(P.air&&!hover&&!fly){ legL.rotation.x=0.35; legR.rotation.x=-0.5; }
+  else { legL.rotation.x=sw; legR.rotation.x=-sw; }
+  body.position.y=1.15+(moving&&!P.slide&&!P.air?Math.abs(Math.sin(walkT))*0.06:0);
 
   // カメラ
   const fp=camMode==="first"&&playing;
-  hero.visible=!fp; document.body.classList.toggle("fp",fp);
+  hero.visible=!fp&&!car.on; car.v.driver.visible=!(fp&&car.on); document.body.classList.toggle("fp",fp);
   if(fp){
-    const eye=P.y+1.75, c=Math.cos(lookPitch);
-    camera.position.set(P.x,eye,P.z);
-    camera.lookAt(P.x+Math.sin(P.h)*c,eye+Math.sin(lookPitch),P.z+Math.cos(P.h)*c);
+    // 車では右ハンドルの運転席から見る
+    const ex=car.on?car.v.eye[0]:0, eye=P.y+(car.on?car.v.eye[1]:P.slide?0.9:1.75), c=Math.cos(lookPitch), hh=P.h+(car.on?P.yawOff:0);
+    const ox=ex*Math.cos(P.h), oz=-ex*Math.sin(P.h);
+    camera.position.set(P.x+ox,eye,P.z+oz);
+    camera.lookAt(P.x+ox+Math.sin(hh)*c,eye+Math.sin(lookPitch),P.z+oz+Math.cos(hh)*c);
   }else{
   let yaw=P.h+P.yawOff;
   if(!playing&&!reduce) P.yawOff+=dt*0.12;
-  const cd=P.dist, cp=P.pitch;
+  const cd=car.on?Math.max(P.dist,car.v.cam):P.dist, cp=P.pitch;
   const tx=P.x-Math.sin(yaw)*cd*Math.cos(cp), tz=P.z-Math.cos(yaw)*cd*Math.cos(cp);
   let ty=P.y+1.5+cd*Math.sin(cp);
   ty=Math.max(ty,world.hAt(Math.max(0,Math.min(WX,tx)),Math.max(0,Math.min(WZ,tz)))+1.5);
   camera.position.lerp(new THREE.Vector3(tx,ty,tz),Math.min(1,dt*6));
-  camera.lookAt(P.x,P.y+1.4,P.z);
+  camera.lookAt(P.x,P.y+(car.on?car.v.look:1.4),P.z);
   }
 
   // 結晶
@@ -1683,6 +2010,8 @@ function drawMini(){
     c.strokeStyle="#1a232b"; c.lineWidth=5; c.beginPath(); c.arc(x,y,10,0,Math.PI*2); c.stroke();
     c.strokeStyle="#ffffff"; c.lineWidth=2.5; c.beginPath(); c.arc(x,y,10,0,Math.PI*2);
     for(const [a,b] of [[-1,0],[1,0],[0,-1],[0,1]]){ c.moveTo(x+a*13,y+b*13); c.lineTo(x+a*20,y+b*20); } c.stroke(); }
+  // 停めてある乗り物
+  if(car.parked){ const x=mapX(car.x), y=mapY(car.z); c.fillStyle=car.v.color; c.strokeStyle="#1a232b"; c.lineWidth=2; c.fillRect(x-6,y-5,12,10); c.strokeRect(x-6,y-5,12,10); }
   // 飛んでいく先
   if(fly){ const fx=mapX(fly.tx), fy=mapY(fly.tz); c.strokeStyle="#f2c14e"; c.lineWidth=3; c.beginPath(); c.arc(fx,fy,9,0,Math.PI*2); c.stroke();
     c.setLineDash([5,5]); c.beginPath(); c.moveTo(mapX(P.x),mapY(P.z)); c.lineTo(fx,fy); c.stroke(); c.setLineDash([]); }
