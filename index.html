@@ -217,9 +217,12 @@ body.bookon #spec { display: none !important; }
 #load-msg .err{color:var(--bad)}
 #ds-list:empty{display:none}
 #ds-list button{border-color:var(--gold)}
+#upd{position:fixed;left:50%;transform:translateX(-50%);top:calc(env(safe-area-inset-top,0px) + 10px);z-index:2000;padding:8px 10px 8px 14px;font-size:14px;display:flex;align-items:center;gap:10px;border-color:var(--gold)}
+#upd button{padding:3px 10px;font-size:13px}
 </style>
 
 <canvas id="gl"></canvas>
+<div id="upd" class="win" role="status" hidden>新しい版が公開されています<button id="upd-go">再読み込み</button><button id="upd-x" aria-label="閉じる">✕</button></div>
 
 <div id="hud-tl" class="win" aria-live="off">
   <div class="w" id="h-world">POS 大陸</div>
@@ -1096,6 +1099,7 @@ async function handleFiles(list){
   setLoadMsg(parts.join("<br>")+(errors.length?`<br><span class="err">${errors.map(esc).join("<br>")}</span>`:""));
   renderDsList();
   if(added.length&&!world) enter(added[0]);
+  ($("ds-list").children.length?$("ds-list"):$("load-msg")).scrollIntoView({block:"nearest",behavior:"smooth"});
 }
 $("pick-files").onclick=()=>$("f-files").click();
 /* デモデータ：このページと同じ場所の demo/wine-pos/ を取ってきて読み込む（file:// では使えない） */
@@ -1831,7 +1835,8 @@ function tick(now){
   requestAnimationFrame(tick);
 }
 /* ---------- 上ってる山のEICとMS/MS ---------- */
-let lastOwner=null, specOn=true;
+let lastOwner=null, specOn=!(matchMedia("(pointer:coarse)").matches||innerWidth<=1040);
+$("b-spec").setAttribute("aria-pressed",specOn);
 function toggleSpec(){ specOn=!specOn; $("b-spec").setAttribute("aria-pressed",specOn); lastOwner="reload"; }
 $("b-spec").onclick=toggleSpec;
 function fmtE(v){ if(v<1000) return Math.round(v)+""; const e=Math.floor(Math.log10(v)); return (v/10**e).toFixed(1)+"e"+e; }
@@ -2101,5 +2106,21 @@ mcv.addEventListener("pointerup",mUp); mcv.addEventListener("pointercancel",mUp)
 addEventListener("resize",sizeMini); sizeMini();
 // グラフのパネルを地図の上に置く画面幅では、地図の高さ（選択欄を含む）に合わせて逃がす。大きく表示中は地図が上に重なる
 if(window.ResizeObserver) new ResizeObserver(()=>{ if(!MV.big) document.documentElement.style.setProperty("--brh",$("hud-br").offsetHeight+"px"); }).observe($("hud-br"));
+/* 新しい版の確認：このページと、サーバーにある最新の index.html を比べる（http/https のときだけ） */
+if(/^https?:$/.test(location.protocol)){
+  // 開いている版の更新日時（document.lastModified）と、サーバーにある最新版の Last-Modified を比べる
+  const url=location.pathname+(location.pathname.endsWith("/")?"index.html":"");
+  const mine=Date.parse(document.lastModified); let told=false;
+  const check=async()=>{ try{
+    if(told||!Number.isFinite(mine)) return;
+    const r=await fetch(url,{method:"HEAD",cache:"no-store"}); if(!r.ok) return;
+    const lm=Date.parse(r.headers.get("last-modified")||"");
+    if(Number.isFinite(lm)&&lm-mine>2000){ told=true; $("upd").hidden=false; }
+  }catch(e){} };
+  $("upd-go").onclick=()=>{ const u=new URL(location.href); u.searchParams.set("v",Date.now().toString(36)); location.replace(u.href); };
+  $("upd-x").onclick=()=>{ $("upd").hidden=true; };
+  setTimeout(check,3000); setInterval(check,5*60*1000);
+  document.addEventListener("visibilitychange",()=>{ if(!document.hidden) check(); });   // タブに戻ってきたときにも確認
+}
 requestAnimationFrame(tick);
 </script>
