@@ -86,12 +86,12 @@ button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 #spec .ref{margin-top:5px;font-size:12px;line-height:1.5;color:var(--dim);overflow-wrap:anywhere}
 #spec .ref b{color:var(--ink);font-weight:400}
 #spec .ref .sw{display:inline-block;width:10px;height:3px;vertical-align:3px;margin:0 4px 0 8px}
-@media (max-width:1040px) and (min-width:561px){#spec{right:max(12px,env(safe-area-inset-right,0px));bottom:calc(env(safe-area-inset-bottom,0px) + 318px)}}
+@media (max-width:1040px) and (min-width:561px){#spec{right:max(12px,env(safe-area-inset-right,0px));bottom:calc(env(safe-area-inset-bottom,0px) + 28px + var(--brh,290px))}}
 @media (max-width:560px){#hud-br{bottom:calc(env(safe-area-inset-bottom,0px) + 64px)}#mini{width:150px}#spec{left:max(8px,env(safe-area-inset-left,0px));right:max(8px,env(safe-area-inset-right,0px));bottom:calc(env(safe-area-inset-bottom,0px) + 240px);padding:6px}#spec .plots{grid-template-columns:1fr;gap:4px}#spec .ref{font-size:11px}}
 /* パネル表示中は会話ウィンドウを上へ逃がす */
 body.specon #msg{bottom:auto;top:calc(env(safe-area-inset-top,0px) + 12px)}
 @media (max-width:1040px){body.specon #msg{top:calc(env(safe-area-inset-top,0px) + 150px)}}
-@media (max-width:560px){body.specon #hud-tl{display:none}body.specon #msg{top:calc(env(safe-area-inset-top,0px) + 8px)}#hud-br{bottom:calc(env(safe-area-inset-bottom,0px) + 74px)}#spec{bottom:calc(env(safe-area-inset-bottom,0px) + 278px)}}
+@media (max-width:560px){body.specon #hud-tl{display:none}body.specon #msg{top:calc(env(safe-area-inset-top,0px) + 8px)}#hud-br{bottom:calc(env(safe-area-inset-bottom,0px) + 74px)}#spec{bottom:calc(env(safe-area-inset-bottom,0px) + 90px + var(--brh,188px))}}
 
 #book,#quiz,#warp{z-index:1100}
 /* ピーク絞り込み（MS-DIAL の Peak spot navigator に合わせる） */
@@ -145,9 +145,30 @@ body.locked.fp #cross{display:block}
 #warp input:focus-visible{outline:3px solid var(--gold);outline-offset:1px}
 #warp #w-id{grid-template-columns:auto 1fr}
 #w-err{color:var(--bad);min-height:1.6em;margin-top:8px;font-size:14px}
-#mini{cursor:crosshair}
 .toy{border:1.5px solid var(--warn);border-radius:5px;padding:8px 12px;margin:10px 0 4px;font-size:13px;line-height:1.65;color:var(--ink);background:rgba(242,154,78,.10)}
 .toy b{color:var(--warn);font-weight:400}
+#mini{cursor:crosshair;touch-action:none}
+#mini.drag{cursor:grabbing}
+/* 地図の拡大・スポット選択 */
+#hud-br .mhd{display:flex;align-items:center;gap:6px;margin-bottom:4px}
+#hud-br .mhd .cap{margin:0;flex:1;white-space:nowrap}
+.mzb{display:flex;gap:3px}
+.mzb button{padding:0 6px;min-width:24px;font-size:13px;line-height:1.5;border-width:1.5px}
+#m-big[aria-pressed="true"]{background:var(--edge);color:#1a232b}
+#m-hint{width:0;min-width:100%;font-size:10.5px;line-height:1.45;color:var(--dim);margin-top:3px}
+#m-sel{width:0;min-width:100%;margin-top:5px;padding-top:5px;border-top:1px dashed rgba(232,220,181,.4);font-size:12px;line-height:1.45}
+#m-sel .sn{color:var(--gold);font-size:13.5px;overflow-wrap:anywhere}
+#m-sel .sm{color:var(--dim);font-size:11px;overflow-wrap:anywhere}
+#m-sel .sb{display:flex;gap:5px;margin-top:4px}
+#m-sel .sb button{padding:2px 8px;font-size:12px;border-width:1.5px;white-space:nowrap}
+@media (max-width:560px){#m-sel .sb{flex-wrap:wrap;gap:4px}#m-sel .sb button{padding:2px 5px}}
+#m-sel #ms-x{margin-left:auto}
+#hud-br.big{z-index:30}
+#hud-br.big #mini{width:min(640px,calc(100vw - 40px),calc((100dvh - 200px)*.96));max-width:none}
+@media (max-width:560px){#m-hint{display:none}#hud-br .mhd{width:0;min-width:100%;flex-wrap:wrap;gap:3px}.mzb button{min-width:22px;padding:0 4px;font-size:12px}#hud-br.big .mhd{width:auto}}
+@media (pointer:coarse){#m-hint{display:none}}
+/* 下のボタン列と横に重なる幅では、地図をボタン列の上に置く（グラフのパネルもその分上へ） */
+@media (max-width:1012px) and (min-width:561px){#hud-br{bottom:calc(env(safe-area-inset-bottom,0px) + 88px)}#spec{bottom:calc(env(safe-area-inset-bottom,0px) + 104px + var(--brh,290px))}}
 /* 携帯（タッチ） */
 .sp-tg{display:none}
 @media (max-width:560px){
@@ -202,8 +223,15 @@ body.bookon #spec { display: none !important; }
   <div id="h-fly" hidden>飛行中 · <span class="keys-only">Space 上昇 · Shift 下降 · Space 2回で解除</span><span class="touch-only-i">上昇・下降ボタン · 地面に着くと解除</span></div>
 </div>
 <div id="hud-br" class="win">
-  <div class="cap">地図　<span>横 RT / 縦 m/z</span></div>
-  <canvas id="mini" width="500" height="520" aria-label="地図：横軸RT、縦軸m/z"></canvas>
+  <div class="mhd"><div class="cap">地図　<span>横 RT / 縦 m/z</span></div>
+    <div class="mzb"><button id="m-in" aria-label="地図を拡大">＋</button><button id="m-out" aria-label="地図を縮小">−</button><button id="m-me" aria-label="現在地を中心にして追いかける">◎</button><button id="m-all" aria-label="大陸全体を表示">全体</button><button id="m-big" aria-pressed="false" aria-label="地図を大きく表示（M）">⤢</button></div></div>
+  <canvas id="mini" width="500" height="520" aria-label="地図：横軸RT、縦軸m/z。ホイールやピンチで拡大、ドラッグで移動、クリックでスポットを選ぶ"></canvas>
+  <div id="m-hint">ホイール・ピンチで拡大 · ドラッグで移動<br>クリックでスポットを選ぶ · ダブルクリックで飛ぶ</div>
+  <div id="m-sel" hidden>
+    <div class="sn" id="ms-nm"></div>
+    <div class="sm num" id="ms-meta"></div>
+    <div class="sb"><button id="ms-go">ここへ飛ぶ</button><button id="ms-sp">グラフ</button><button id="ms-x" aria-label="選択を解除">✕</button></div>
+  </div>
 </div>
 <div id="hud-tr" class="win">
   <div class="cap">山の色（脂質クラス）</div>
@@ -294,8 +322,9 @@ body.bookon #spec { display: none !important; }
     <p>山肌の色は、その山を作っているピークの脂質クラス（MS-DIALの名前から判定）。くすんだ色は low score の山です。山に登ると、画面の下にそのピークのEICとMS/MSが出ます。</p>
     <p class="keys keys-only">画面をクリックすると、マウスで向きを変えられます（マインクラフトと同じ。<kbd>Esc</kbd> で解除）<br>
       <kbd>W</kbd><kbd>S</kbd> 前後　<kbd>A</kbd><kbd>D</kbd> 左右　<kbd>Space</kbd> ジャンプ（2回押すと空を飛ぶ。飛行中は <kbd>Space</kbd> 上昇・<kbd>Shift</kbd> 下降）<br><kbd>Shift</kbd> 走る　<kbd>V</kbd> 一人称・三人称　ホイールで距離　<kbd>←</kbd><kbd>→</kbd> 向き<br>
-      <kbd>F</kbd> マントで飛ぶ　<kbd>N</kbd> 絞り込み　<kbd>J</kbd> 図鑑　<kbd>E</kbd> スペクトル表示の切替</p>
-    <p class="touch-only">▲▼◀▶ で移動、「上昇」で空を飛び「下降」で降りる、指でドラッグして視点、2本指で広げる・つまむとズーム。「マント」でアラインメントIDや RT・m/z を入れるか、右下の地図をタップすると、そこへ飛べます。</p>
+      <kbd>F</kbd> マントで飛ぶ　<kbd>N</kbd> 絞り込み　<kbd>J</kbd> 図鑑　<kbd>E</kbd> スペクトル表示の切替　<kbd>M</kbd> 地図を大きく<br>
+      地図はホイールで拡大・ドラッグで移動、クリックでスポット（ピーク）を選べます</p>
+    <p class="touch-only">▲▼◀▶ で移動、「上昇」で空を飛び「下降」で降りる、指でドラッグして視点、2本指で広げる・つまむとズーム。「マント」でアラインメントIDや RT・m/z を入れると、そこへ飛べます。右下の地図は2本指で拡大・1本指で移動、タップでスポットを選び「ここへ飛ぶ」で飛べます。</p>
     <p class="hint">ファイルはこのブラウザの中だけで読み込まれ、どこにも送信されません。</p>
   </div>
 </div>
@@ -320,7 +349,7 @@ body.bookon #spec { display: none !important; }
     <button class="go">この場所へ飛ぶ</button>
   </form>
   <div id="w-err" aria-live="polite"></div>
-  <p class="hint">右下の地図をクリック（タップ）しても、その場所へ飛べます。</p>
+  <p class="hint">右下の地図でスポットを選んで「ここへ飛ぶ」を押すか、地図をダブルクリック（ダブルタップ）しても、その場所へ飛べます。</p>
   <div class="btnrow"><button id="w-close">やめる (ESC)</button></div>
 </div></div>
 
@@ -686,7 +715,7 @@ const NX=360, NZ=480, DX=WX/(NX-1), DZ=WZ/(NZ-1);
 const LOG0=2.3, HS=6;            // 標高 = (log10強度 - 2.3) * 6
 const SIG_X=2.4, SIG_Z=3.0;      // 山の幅（見やすさ用）
 const toX=rt=>(rt-RT0)*SX, toZ=mz=>(MZ1-mz)*SZ;   // m/z が大きいほど奥（-z）
-const MAP={W:500,H:520,ML:76,MT:12,PW:410,PH:430};   // 地図キャンバス（内部解像度）
+const MAP={W:500,H:520,ML:76,MT:12,PW:410,PH:430};   // 地図キャンバス（論理座標）
 const toRT=x=>x/SX+RT0, toMZ=z=>MZ1-z/SZ;
 
 /* 公開版ではクイズを外している */
@@ -908,6 +937,7 @@ function enter(key){
   if(!worlds[key]) DS[key].view=filterRows(DS[key]);
   world=buildWorld(key); setScale(world.sc); scene.add(world.group); syncNav();
   for(const m of world.markers){ m.found=got(key).includes(m.id); paint(m); }
+  selectSpot(null); MV.s=1; MV.follow=true; clampMV();
   // スタート地点：いちばん高い結晶の少し西
   const hi=world.markers.reduce((a,m)=>!a||m.r[3]>a.r[3]?m:a,null);
   P.x=hi?Math.max(2,hi.x-16):WX/4; P.z=hi?hi.z:WZ/2; P.h=Math.PI*0.5; P.yawOff=0;
@@ -1057,6 +1087,7 @@ addEventListener("keydown",e=>{
   if(!$("warp").hidden){ if(e.key==="Escape"||e.key==="f"||e.key==="F") closeWarp(); return; }
   if(e.key==="f"||e.key==="F"){ openWarp(); return; }
   if((e.key==="n"||e.key==="N")&&playing){ toggleNav(); return; }
+  if((e.key==="m"||e.key==="M")&&playing){ setBigMap(!MV.big); return; }
   if((e.key==="v"||e.key==="V")&&playing){ camMode=camMode==="first"?"third":"first"; lookPitch=0; lockHint(); return; }
   if(e.code==="Space"){ e.preventDefault(); if(document.activeElement&&document.activeElement.tagName==="BUTTON") document.activeElement.blur();
     keys.Space=true; if(e.repeat||!playing||paused||fly) return;
@@ -1176,6 +1207,7 @@ function rebuildWorld(){
   world=buildWorld(key); setScale(world.sc); scene.add(world.group);
   for(const m of world.markers){ m.found=got(key).includes(m.id); paint(m); }
   P.x=keep.x; P.z=keep.z; P.h=keep.h; P.vy=0; P.air=false;
+  selectSpot(sel?world.rows.find(r=>r[0]===sel.id):null);
   updateProg(); lastOwner="reload"; labelKey=""; syncNav();
 }
 function applyNav(){
@@ -1322,7 +1354,7 @@ $("w-id").onsubmit=e=>{ e.preventDefault();
   const byId=world.byId||(world.byId=new Map(world.ds.rows.map(r=>[r[0],r])));
   const r=raw!==""&&Number.isInteger(id)?byId.get(id):null;
   if(!r){ $("w-err").textContent=raw===""?"アラインメントIDを入れてください":`ID ${raw} はこの大陸にありません`; return; }
-  closeWarp(); flyTo(toX(r[1]),toZ(r[2]),`ID ${r[0]}`,r);
+  closeWarp(); if(world.rows.includes(r)) selectSpot(r); flyTo(toX(r[1]),toZ(r[2]),`ID ${r[0]}`,r);
 };
 $("w-xy").onsubmit=e=>{ e.preventDefault();
   const num=v=>parseFloat(v.trim().replace(/[０-９．]/g,c=>c==="．"?".":String.fromCharCode(c.charCodeAt(0)-0xFEE0)));
@@ -1331,14 +1363,6 @@ $("w-xy").onsubmit=e=>{ e.preventDefault();
   if(rt<RT0||rt>RT1||mz<MZ0||mz>MZ1){ $("w-err").textContent=`この大陸の外です（RT ${RT0}–${RT1} min、m/z ${MZ0}–${MZ1}）`; return; }
   closeWarp(); flyTo(toX(rt),toZ(mz),`RT ${+rt.toFixed(3)} min · m/z ${+mz.toFixed(4)}`);
 };
-// 地図をクリック（タップ）したところへ飛ぶ
-$("mini").addEventListener("click",e=>{
-  if(!playing||paused||!world||fly) return;
-  const b=$("mini").getBoundingClientRect(), px=(e.clientX-b.left)/b.width*MAP.W, py=(e.clientY-b.top)/b.height*MAP.H;
-  if(px<MAP.ML||px>MAP.ML+MAP.PW||py<MAP.MT||py>MAP.MT+MAP.PH) return;
-  const x=(px-MAP.ML)/MAP.PW*WX, z=(py-MAP.MT)/MAP.PH*WZ;
-  flyTo(x,z,`RT ${toRT(x).toFixed(2)} min · m/z ${toMZ(z).toFixed(1)}`);
-});
 
 /* ---------- ループ ---------- */
 function resize(){ const w=innerWidth,h=innerHeight; renderer.setSize(w,h,false); camera.aspect=w/h; camera.updateProjectionMatrix(); }
@@ -1417,6 +1441,7 @@ function tick(now){
     m.gem.rotation.y=tt*1.4; m.gem.position.y=m.top+2.4+(reduce?0:Math.sin(tt*2+m.x)*0.25);
     if(active&&!m.found&&Math.hypot(P.x-m.x,P.z-m.z)<2.6&&P.y<m.top+6) discover(m);
   }
+  if(selMark.visible) selMark.children[1].scale.setScalar(1+(reduce?0:0.18*Math.sin(tt*4)));
   if(msgTimer>0){ msgTimer-=dt; if(msgTimer<=0) $("msg").hidden=true; }
 
   // HUD
@@ -1520,23 +1545,88 @@ function updateSpec(row){
 }
 $("b-menu").addEventListener("click",()=>{ $("spec").hidden=true; lastOwner="reload"; });
 
-const mctx=$("mini").getContext("2d");
-const mapX=x=>MAP.ML+x/WX*MAP.PW, mapY=z=>MAP.MT+z/WZ*MAP.PH;
-function drawMini(){
-  const c=mctx, {W,H,ML,MT,PW,PH}=MAP;
-  c.clearRect(0,0,W,H);
-  c.imageSmoothingEnabled=true; c.drawImage(world.mini,ML,MT,PW,PH);
-  // 目盛りと軸ラベル
+/* ---------- 地図：拡大・移動・スポット選択 ----------
+   MV は表示範囲（中心 cx,cz と倍率 s。s=1 で大陸全体）。地形・目盛り・スポットは表示範囲が変わったときだけ
+   下書き（mbase）に描き、毎フレームは結晶・選択・主人公だけを重ねる。 */
+const mcv=$("mini"), mctx=mcv.getContext("2d");
+const MV={cx:WX/2,cz:WZ/2,s:1,follow:true,big:false}, MV_MAX=40;
+const mbase=document.createElement("canvas");
+let mq=1, mbaseKey="", mbaseW=null;
+function clampMV(){
+  MV.s=Math.max(1,Math.min(MV_MAX,MV.s));
+  const hx=WX/MV.s/2, hz=WZ/MV.s/2;
+  MV.cx=Math.max(hx,Math.min(WX-hx,MV.cx)); MV.cz=Math.max(hz,Math.min(WZ-hz,MV.cz));
+}
+const mapX=x=>MAP.ML+((x-MV.cx)*MV.s/WX+0.5)*MAP.PW, mapY=z=>MAP.MT+((z-MV.cz)*MV.s/WZ+0.5)*MAP.PH;
+const unmapX=px=>MV.cx+((px-MAP.ML)/MAP.PW-0.5)*WX/MV.s, unmapZ=py=>MV.cz+((py-MAP.MT)/MAP.PH-0.5)*WZ/MV.s;
+// 地図上の (px,py) を動かさずに倍率を変える
+function zoomMap(f,px,py){
+  const wx=px==null?MV.cx:unmapX(px), wz=py==null?MV.cz:unmapZ(py), s0=MV.s;
+  MV.s=Math.max(1,Math.min(MV_MAX,s0*f));
+  MV.cx=wx-(wx-MV.cx)*s0/MV.s; MV.cz=wz-(wz-MV.cz)*s0/MV.s; clampMV();
+}
+// 表示の大きさに合わせて内部解像度を変える（大きく表示してもにじまないように）
+function sizeMini(){
+  const q=Math.max(1,Math.min(3,Math.ceil((mcv.clientWidth||250)*Math.min(devicePixelRatio||1,2)/MAP.W*2)/2));
+  if(q===mq&&mcv.width===MAP.W*q&&mbase.width===MAP.W*q) return;
+  mq=q; mcv.width=mbase.width=MAP.W*q; mcv.height=mbase.height=MAP.H*q; mbaseKey="";
+}
+function setBigMap(on){
+  MV.big=on; $("hud-br").classList.toggle("big",on); $("m-big").setAttribute("aria-pressed",on); sizeMini();
+}
+const fmtTick=(v,step)=>v.toFixed(Math.max(0,-Math.floor(Math.log10(step)+1e-9)));
+const SPOT_COL={ok:"#3fb8a8",warn:"#f29a4e",unk:"#b48cf2"};
+function spotsOf(w){
+  if(w.spots) return w.spots;
+  const n=w.rows.length, x=new Float32Array(n), z=new Float32Array(n), st=[];
+  w.rows.forEach((r,i)=>{ x[i]=toX(r[1]); z[i]=toZ(r[2]); st.push(statusOf(w.ds.names[r[0]]||"").s); });
+  return w.spots={x,z,st};
+}
+function drawMapBase(){
+  const c=mbase.getContext("2d"), {W,H,ML,MT,PW,PH}=MAP;
+  c.setTransform(mq,0,0,mq,0,0); c.clearRect(0,0,W,H);
+  // 地形（大陸全体の画像から表示範囲を切り出す）
+  const im=world.mini, vw=WX/MV.s, vh=WZ/MV.s;
+  c.imageSmoothingEnabled=true;
+  c.drawImage(im,(MV.cx-vw/2)/WX*im.width,(MV.cz-vh/2)/WZ*im.height,vw/WX*im.width,vh/WZ*im.height,ML,MT,PW,PH);
+  c.save(); c.beginPath(); c.rect(ML,MT,PW,PH); c.clip();
+  // スポット（アライメントスポット。絞り込みで残っているもの）
+  const sp=spotsOf(world), R=Math.min(4.2,1.25+Math.log2(MV.s)*0.75), paths={ok:new Path2D(),warn:new Path2D(),unk:new Path2D()};
+  for(let i=0;i<sp.x.length;i++){
+    const x=mapX(sp.x[i]), y=mapY(sp.z[i]);
+    if(x<ML-R||x>ML+PW+R||y<MT-R||y>MT+PH+R) continue;
+    const p=paths[sp.st[i]]; p.moveTo(x+R,y); p.arc(x,y,R,0,Math.PI*2);
+  }
+  c.globalAlpha=MV.s<2?0.6:0.85;
+  c.strokeStyle="rgba(18,28,36,.75)"; c.lineWidth=0.8;
+  for(const k of ["unk","warn","ok"]){ c.fillStyle=SPOT_COL[k]; c.fill(paths[k]); if(MV.s>=2) c.stroke(paths[k]); }
+  c.globalAlpha=1; c.restore();
+  // 目盛りと軸ラベル（北が上＝上ほど m/z が大きい）
+  const rtA=toRT(unmapX(ML)), rtB=toRT(unmapX(ML+PW)), mzT=toMZ(unmapZ(MT)), mzB=toMZ(unmapZ(MT+PH));
   c.font="18px 'IBM Plex Mono', monospace"; c.fillStyle="#c9d2d8"; c.strokeStyle="rgba(243,241,232,.25)"; c.lineWidth=1;
   c.textAlign="center"; c.textBaseline="top";
-  const srt=niceStep(RT1-RT0,4), smz=niceStep(MZ1-MZ0,5);
-  for(let rt=Math.ceil(RT0/srt-1e-9)*srt;rt<=RT1+1e-9;rt+=srt){ const x=mapX(toX(rt)); c.beginPath(); c.moveTo(x,MT); c.lineTo(x,MT+PH); c.stroke(); c.fillText(+rt.toFixed(2),x,MT+PH+6); }
+  const srt=niceStep(rtB-rtA,4), smz=niceStep(mzT-mzB,5);
+  for(let rt=Math.ceil(rtA/srt-1e-9)*srt;rt<=rtB+1e-9;rt+=srt){ const x=mapX(toX(rt)); c.beginPath(); c.moveTo(x,MT); c.lineTo(x,MT+PH); c.stroke(); c.fillText(fmtTick(rt,srt),x,MT+PH+6); }
   c.textAlign="right"; c.textBaseline="middle";
-  for(let mz=Math.ceil(MZ0/smz-1e-9)*smz;mz<=MZ1+1e-9;mz+=smz){ const y=mapY(toZ(mz)); c.beginPath(); c.moveTo(ML,y); c.lineTo(ML+PW,y); c.stroke(); c.fillText(+mz.toFixed(2),ML-6,y); }
+  for(let mz=Math.ceil(mzB/smz-1e-9)*smz;mz<=mzT+1e-9;mz+=smz){ const y=mapY(toZ(mz)); c.beginPath(); c.moveTo(ML,y); c.lineTo(ML+PW,y); c.stroke(); c.fillText(fmtTick(mz,smz),ML-6,y); }
   c.fillStyle="#f2c14e"; c.font="19px 'DotGothic16', sans-serif";
   c.textAlign="center"; c.textBaseline="top"; c.fillText("RT (min) →",ML+PW/2,MT+PH+28);
   c.save(); c.translate(16,MT+PH/2); c.rotate(-Math.PI/2); c.textBaseline="middle"; c.fillText("m/z →",0,0); c.restore();
+  if(MV.s>1.001){ c.font="17px 'IBM Plex Mono', monospace"; c.textAlign="right"; c.textBaseline="top";
+    const t=`×${MV.s<10?MV.s.toFixed(1):Math.round(MV.s)}`, tw=c.measureText(t).width;
+    c.fillStyle="rgba(18,28,36,.75)"; c.fillRect(ML+PW-tw-12,MT+4,tw+8,22); c.fillStyle="#f2c14e"; c.fillText(t,ML+PW-8,MT+7); }
   c.strokeStyle="#e8dcb5"; c.lineWidth=2; c.strokeRect(ML,MT,PW,PH);
+}
+function drawMini(){
+  const c=mctx, {ML,MT,PW,PH}=MAP;
+  // 追いかけ中は、主人公が地図の端に寄ったら真ん中に戻す
+  if(MV.follow&&MV.s>1){ const fx=(P.x-MV.cx)*MV.s/WX, fz=(P.z-MV.cz)*MV.s/WZ;
+    if(Math.abs(fx)>0.3||Math.abs(fz)>0.3){ MV.cx=P.x; MV.cz=P.z; clampMV(); } }
+  const key=`${MV.cx}|${MV.cz}|${MV.s}|${mq}`;
+  if(key!==mbaseKey||mbaseW!==world){ mbaseKey=key; mbaseW=world; drawMapBase(); }
+  c.setTransform(1,0,0,1,0,0); c.clearRect(0,0,mcv.width,mcv.height); c.drawImage(mbase,0,0);
+  c.setTransform(mq,0,0,mq,0,0);
+  c.save(); c.beginPath(); c.rect(ML,MT,PW,PH); c.clip();
   // 結晶
   for(const m of world.markers){
     c.fillStyle="#"+(m.found?COL.gold:COL[m.kind]).toString(16).padStart(6,"0");
@@ -1544,13 +1634,99 @@ function drawMini(){
     c.beginPath(); c.moveTo(x,y-6); c.lineTo(x+5,y); c.lineTo(x,y+6); c.lineTo(x-5,y); c.closePath(); c.fill();
     c.strokeStyle="#1a232b"; c.lineWidth=1.2; c.stroke();
   }
+  // 選んだスポット
+  if(sel){ const x=mapX(sel.x), y=mapY(sel.z);
+    c.strokeStyle="#1a232b"; c.lineWidth=5; c.beginPath(); c.arc(x,y,10,0,Math.PI*2); c.stroke();
+    c.strokeStyle="#ffffff"; c.lineWidth=2.5; c.beginPath(); c.arc(x,y,10,0,Math.PI*2);
+    for(const [a,b] of [[-1,0],[1,0],[0,-1],[0,1]]){ c.moveTo(x+a*13,y+b*13); c.lineTo(x+a*20,y+b*20); } c.stroke(); }
   // 飛んでいく先
   if(fly){ const fx=mapX(fly.tx), fy=mapY(fly.tz); c.strokeStyle="#f2c14e"; c.lineWidth=3; c.beginPath(); c.arc(fx,fy,9,0,Math.PI*2); c.stroke();
     c.setLineDash([5,5]); c.beginPath(); c.moveTo(mapX(P.x),mapY(P.z)); c.lineTo(fx,fy); c.stroke(); c.setLineDash([]); }
-  // 主人公と向き
-  const px=mapX(P.x), py=mapY(P.z), dx=Math.sin(P.h), dy=Math.cos(P.h);
+  c.restore();
+  // 主人公と向き（地図の外にいるときは縁に半透明で出す）
+  const rx=mapX(P.x), ry=mapY(P.z), px=Math.max(ML,Math.min(ML+PW,rx)), py=Math.max(MT,Math.min(MT+PH,ry)), dx=Math.sin(P.h), dy=Math.cos(P.h);
+  c.globalAlpha=px!==rx||py!==ry?0.5:1;
   c.fillStyle="#ffffff"; c.strokeStyle="#1a232b"; c.lineWidth=2.5;
   c.beginPath(); c.moveTo(px+dx*16,py+dy*16); c.lineTo(px-dy*8-dx*6,py+dx*8-dy*6); c.lineTo(px+dy*8-dx*6,py-dx*8-dy*6); c.closePath(); c.fill(); c.stroke();
+  c.globalAlpha=1;
 }
+
+/* 選んだスポット：地図に丸、3D の世界には金色の光の柱 */
+let sel=null;
+const selMark=new THREE.Group();
+selMark.add(new THREE.Mesh(new THREE.CylinderGeometry(0.16,0.16,70,8),new THREE.MeshBasicMaterial({color:COL.gold,transparent:true,opacity:0.6,depthWrite:false})));
+selMark.add(new THREE.Mesh(new THREE.TorusGeometry(1.7,0.14,8,36),new THREE.MeshBasicMaterial({color:COL.gold})));
+selMark.children[0].position.y=35; selMark.children[1].rotation.x=Math.PI/2; selMark.children[1].position.y=0.4;
+selMark.visible=false; scene.add(selMark);
+function selectSpot(r){
+  if(!r||!world){ sel=null; selMark.visible=false; $("m-sel").hidden=true; $("m-hint").hidden=false; return; }
+  const ds=world.ds, id=r[0], st=statusOf(ds.names[id]||""), x=toX(r[1]), z=toZ(r[2]);
+  sel={r,id,x,z};
+  selMark.position.set(x,world.hAt(x,z),z); selMark.visible=true;
+  $("ms-nm").textContent=st.label;
+  $("ms-nm").style.color=SPOT_COL[st.s];
+  $("ms-meta").textContent=`ID ${id} · RT ${r[1].toFixed(2)} min · m/z ${r[2].toFixed(4)} · 強度 ${fmtInt(r[3])}`+(ds.adduct[id]?` · ${ds.adduct[id]}`:"")+(ds.ont[id]?` · ${ds.ont[id]}`:"");
+  $("m-sel").hidden=false; $("m-hint").hidden=true;
+}
+// 地図の点 (px,py)（論理座標）にいちばん近いスポット。tol は論理座標での半径
+function spotAt(px,py,tol){
+  const sp=spotsOf(world); let best=-1, bd=tol*tol;
+  for(let i=0;i<sp.x.length;i++){ const dx=mapX(sp.x[i])-px, dy=mapY(sp.z[i])-py, d=dx*dx+dy*dy; if(d<bd){ bd=d; best=i; } }
+  return best<0?null:world.rows[best];
+}
+function flyToSpot(r){ if(!fly) flyTo(toX(r[1]),toZ(r[2]),`ID ${r[0]}`,r); }
+$("ms-go").onclick=()=>{ if(sel) flyToSpot(sel.r); };
+$("ms-sp").onclick=()=>{
+  if(!sel||!playing) return;
+  if(!specOn){ specOn=true; $("b-spec").setAttribute("aria-pressed",true); }
+  updateSpec(sel.r);
+  // 足もとの山が変わるまでは、選んだスポットのグラフを出したままにする
+  const own=world.ownerAt(P.x,P.z); lastOwner=own?world.key+":"+own[0]:null;
+};
+$("ms-x").onclick=()=>selectSpot(null);
+$("m-in").onclick=()=>{ if(MV.follow){ MV.cx=P.x; MV.cz=P.z; } zoomMap(2); };
+$("m-out").onclick=()=>zoomMap(0.5);
+$("m-me").onclick=()=>{ MV.follow=true; if(MV.s<4) MV.s=4; MV.cx=P.x; MV.cz=P.z; clampMV(); };
+$("m-all").onclick=()=>{ MV.s=1; MV.follow=true; clampMV(); };
+$("m-big").onclick=()=>setBigMap(!MV.big);
+for(const id of ["m-in","m-out","m-me","m-all","m-big","ms-go","ms-sp","ms-x"]) $(id).addEventListener("click",e=>e.currentTarget.blur());
+
+// 地図の操作：ホイール・ピンチで拡大、ドラッグで移動、クリックで選ぶ、ダブルクリックで飛ぶ
+const mptr=new Map(); let mDrag=false, mPinch=null, mLast={t:0,x:0,y:0};
+const toMap=e=>{ const b=mcv.getBoundingClientRect(); return [(e.clientX-b.left)/b.width*MAP.W,(e.clientY-b.top)/b.height*MAP.H]; };
+mcv.addEventListener("wheel",e=>{ e.preventDefault(); e.stopPropagation(); if(!world) return;
+  const [px,py]=toMap(e); MV.follow=false; zoomMap(Math.pow(1.0015,-e.deltaY*(e.deltaMode===1?33:1)),px,py); },{passive:false});
+mcv.addEventListener("pointerdown",e=>{ if(!world) return; e.preventDefault(); e.stopPropagation();
+  mptr.set(e.pointerId,{x:e.clientX,y:e.clientY,x0:e.clientX,y0:e.clientY}); mcv.setPointerCapture(e.pointerId);
+  if(mptr.size===1) mDrag=false;
+  if(mptr.size===2){ const [a,b]=[...mptr.values()]; mPinch={d:Math.hypot(a.x-b.x,a.y-b.y),s:MV.s}; mDrag=true; } });
+mcv.addEventListener("pointermove",e=>{ const p=mptr.get(e.pointerId); if(!p||!world) return;
+  const b=mcv.getBoundingClientRect(), k=MAP.W/b.width;
+  if(mptr.size>=2&&mPinch){ p.x=e.clientX; p.y=e.clientY; const [a,c]=[...mptr.values()], d=Math.hypot(a.x-c.x,a.y-c.y);
+    if(mPinch.d>0&&d>0){ MV.follow=false; zoomMap(mPinch.s*d/mPinch.d/MV.s,((a.x+c.x)/2-b.left)*k,((a.y+c.y)/2-b.top)*k); } return; }
+  if(!mDrag&&Math.hypot(e.clientX-p.x0,e.clientY-p.y0)>5){ mDrag=true; mcv.classList.add("drag"); }
+  if(mDrag){ MV.follow=false; MV.cx-=(e.clientX-p.x)*k/MAP.PW*WX/MV.s; MV.cz-=(e.clientY-p.y)*k/MAP.PH*WZ/MV.s; clampMV(); }
+  p.x=e.clientX; p.y=e.clientY; });
+const mUp=e=>{ const p=mptr.get(e.pointerId); if(!p) return; mptr.delete(e.pointerId);
+  if(mptr.size<2) mPinch=null;
+  if(mptr.size) return;
+  mcv.classList.remove("drag");
+  if(mDrag||e.type==="pointercancel"||!world||!playing||paused) return;
+  const [px,py]=toMap(e);
+  if(px<MAP.ML||px>MAP.ML+MAP.PW||py<MAP.MT||py>MAP.MT+MAP.PH) return;
+  const b=mcv.getBoundingClientRect(), tol=(e.pointerType==="mouse"?12:22)*MAP.W/b.width;
+  const r=spotAt(px,py,tol), now=performance.now(), dbl=now-mLast.t<380&&Math.hypot(e.clientX-mLast.x,e.clientY-mLast.y)<12;
+  mLast={t:dbl?0:now,x:e.clientX,y:e.clientY};
+  if(dbl){ // ダブルクリック：スポットがあればそこへ、なければその場所へ飛ぶ
+    if(fly) return;
+    if(r) flyToSpot(r);
+    else { const x=unmapX(px), z=unmapZ(py); flyTo(x,z,`RT ${toRT(x).toFixed(2)} min · m/z ${toMZ(z).toFixed(1)}`); }
+    return; }
+  selectSpot(r);
+};
+mcv.addEventListener("pointerup",mUp); mcv.addEventListener("pointercancel",mUp);
+addEventListener("resize",sizeMini); sizeMini();
+// グラフのパネルを地図の上に置く画面幅では、地図の高さ（選択欄を含む）に合わせて逃がす。大きく表示中は地図が上に重なる
+if(window.ResizeObserver) new ResizeObserver(()=>{ if(!MV.big) document.documentElement.style.setProperty("--brh",$("hud-br").offsetHeight+"px"); }).observe($("hud-br"));
 requestAnimationFrame(tick);
 </script>
