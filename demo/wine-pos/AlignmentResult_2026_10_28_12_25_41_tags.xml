@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PeakSpotTags>
+  <Definitions>
+    <Tag>
+      <Id>1</Id>
+      <Label>Confirmed</Label>
+    </Tag>
+    <Tag>
+      <Id>2</Id>
+      <Label>Low quality spectrum</Label>
+    </Tag>
+    <Tag>
+      <Id>3</Id>
+      <Label>Misannotation</Label>
+    </Tag>
+    <Tag>
+      <Id>4</Id>
+      <Label>Coelution (mixed spectra)</Label>
+    </Tag>
+    <Tag>
+      <Id>5</Id>
+      <Label>Overannotation</Label>
+    </Tag>
+  </Definitions>
+  <Peaks />
+</PeakSpotTags>

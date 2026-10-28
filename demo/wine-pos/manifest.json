@@ -1,0 +1,39 @@
+{
+ "label": "ワイン（MS-DIAL チュートリアルのデモデータ、Positive）",
+ "files": [
+  {
+   "name": "AlignmentResult_2026_10_28_12_25_41.arf2",
+   "gzip": true,
+   "parts": [
+    "AlignmentResult_2026_10_28_12_25_41.arf2.gz.part00"
+   ]
+  },
+  {
+   "name": "AlignmentResult_2026_10_28_12_25_41_PeakProperties.arf",
+   "gzip": true,
+   "parts": [
+    "AlignmentResult_2026_10_28_12_25_41_PeakProperties.arf.gz.part00",
+    "AlignmentResult_2026_10_28_12_25_41_PeakProperties.arf.gz.part01"
+   ]
+  },
+  {
+   "name": "AlignmentResult_2026_10_28_12_25_41.dcl",
+   "gzip": true,
+   "parts": [
+    "AlignmentResult_2026_10_28_12_25_41.dcl.gz.part00"
+   ]
+  },
+  {
+   "name": "AlignmentResult_2026_10_28_12_25_41.EIC.aef",
+   "gzip": true,
+   "parts": [
+    "AlignmentResult_2026_10_28_12_25_41.EIC.aef.gz.part00",
+    "AlignmentResult_2026_10_28_12_25_41.EIC.aef.gz.part01",
+    "AlignmentResult_2026_10_28_12_25_41.EIC.aef.gz.part02"
+   ]
+  },
+  {
+   "path": "AlignmentResult_2026_10_28_12_25_41_tags.xml"
+  }
+ ]
+}
