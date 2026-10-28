@@ -279,6 +279,7 @@ body.bookon #spec { display: none !important; }
       <div class="btnrow" style="margin-top:8px">
         <button id="pick-files">ファイルを選ぶ</button>
         <button id="pick-dir">フォルダごと選ぶ</button>
+        <button id="pick-demo" hidden>デモデータ（ワイン）で遊ぶ</button>
       </div>
       <input type="file" id="f-files" multiple hidden>
       <input type="file" id="f-dir" webkitdirectory multiple hidden>
@@ -684,9 +685,9 @@ function setScale(sc){ RT0=sc.RT0; RT1=sc.RT1; MZ0=sc.MZ0; MZ1=sc.MZ1; SX=WX/(RT
 const NX=360, NZ=480, DX=WX/(NX-1), DZ=WZ/(NZ-1);
 const LOG0=2.3, HS=6;            // 標高 = (log10強度 - 2.3) * 6
 const SIG_X=2.4, SIG_Z=3.0;      // 山の幅（見やすさ用）
-const toX=rt=>(rt-RT0)*SX, toZ=mz=>(mz-MZ0)*SZ;
+const toX=rt=>(rt-RT0)*SX, toZ=mz=>(MZ1-mz)*SZ;   // m/z が大きいほど奥（-z）
 const MAP={W:500,H:520,ML:76,MT:12,PW:410,PH:430};   // 地図キャンバス（内部解像度）
-const toRT=x=>x/SX+RT0, toMZ=z=>z/SZ+MZ0;
+const toRT=x=>x/SX+RT0, toMZ=z=>MZ1-z/SZ;
 
 /* 公開版ではクイズを外している */
 const QUIZ=[];
@@ -852,7 +853,7 @@ function buildWorld(key){
   const mc=document.createElement("canvas"); mc.width=PW; mc.height=PH;
   const cx=mc.getContext("2d"), im=cx.createImageData(PW,PH);
   for(let py=0;py<PH;py++)for(let px=0;px<PW;px++){
-    const gx=px/(PW-1)*WX, gz=(1-py/(PH-1))*WZ, kk=Math.round(gz/DZ)*NX+Math.round(gx/DX);
+    const gx=px/(PW-1)*WX, gz=py/(PH-1)*WZ, kk=Math.round(gz/DZ)*NX+Math.round(gx/DX);
     const h=hAt(gx,gz), c=colorFor(h,maxH,99.5,25,ontAt(kk),OV[kk]);
     const o=(py*PW+px)*4; im.data[o]=c[0]*255;im.data[o+1]=c[1]*255;im.data[o+2]=c[2]*255;im.data[o+3]=255;
   }
@@ -1009,6 +1010,31 @@ async function handleFiles(list){
   if(added.length&&!world) enter(added[0]);
 }
 $("pick-files").onclick=()=>$("f-files").click();
+/* デモデータ：このページと同じ場所の demo/wine-pos/ を取ってきて読み込む（file:// では使えない） */
+const DEMO="demo/wine-pos/";
+if(/^https?:$/.test(location.protocol)) $("pick-demo").hidden=false;
+$("pick-demo").onclick=async()=>{
+  const btn=$("pick-demo"); btn.disabled=true;
+  try{
+    const res=await fetch(DEMO+"manifest.json",{cache:"no-cache"});
+    if(!res.ok) throw new Error("このページにはデモデータがありません");
+    const m=await res.json(), files=[];
+    for(const [i,f] of m.files.entries()){
+      setLoadMsg(`デモデータをダウンロード中… ${i+1}/${m.files.length}`);
+      const paths=f.parts||[f.path], bufs=[];
+      for(const pth of paths){ const r=await fetch(DEMO+pth); if(!r.ok) throw new Error(`${pth} を取得できませんでした`); bufs.push(await r.blob()); }
+      let blob=new Blob(bufs);
+      if(f.gzip){ const head=new Uint8Array(await blob.slice(0,2).arrayBuffer());
+        if(head[0]===0x1f&&head[1]===0x8b){                      // まだ圧縮されたままなら展開する
+          if(typeof DecompressionStream==="undefined") throw new Error("このブラウザは圧縮ファイルを展開できません（Chrome / Edge / 新しい Safari で開いてください）");
+          setLoadMsg(`EIC を展開中…`);
+          blob=await new Response(blob.stream().pipeThrough(new DecompressionStream("gzip"))).blob(); } }
+      files.push(new File([blob],f.name||f.path.split("/").pop()));
+    }
+    await handleFiles(files);
+  }catch(e){ setLoadMsg(`<span class="err">デモデータを読み込めませんでした：${esc(e.message)}</span>`); }
+  btn.disabled=false;
+};
 $("pick-dir").onclick=()=>$("f-dir").click();
 $("f-files").onchange=e=>{ handleFiles(e.target.files); e.target.value=""; };
 $("f-dir").onchange=e=>{ handleFiles(e.target.files); e.target.value=""; };
@@ -1310,7 +1336,7 @@ $("mini").addEventListener("click",e=>{
   if(!playing||paused||!world||fly) return;
   const b=$("mini").getBoundingClientRect(), px=(e.clientX-b.left)/b.width*MAP.W, py=(e.clientY-b.top)/b.height*MAP.H;
   if(px<MAP.ML||px>MAP.ML+MAP.PW||py<MAP.MT||py>MAP.MT+MAP.PH) return;
-  const x=(px-MAP.ML)/MAP.PW*WX, z=(1-(py-MAP.MT)/MAP.PH)*WZ;
+  const x=(px-MAP.ML)/MAP.PW*WX, z=(py-MAP.MT)/MAP.PH*WZ;
   flyTo(x,z,`RT ${toRT(x).toFixed(2)} min · m/z ${toMZ(z).toFixed(1)}`);
 });
 
@@ -1430,7 +1456,7 @@ function drawEIC(cv,e,rtMark,msg){
   const X=x=>L+(x-x0)/(x1-x0||1)*(W-L-R), Y=y=>H-B-y/ym*(H-B-T);
   c.font="18px 'IBM Plex Mono', monospace"; c.fillStyle="#c9d2d8"; c.strokeStyle="rgba(243,241,232,.12)"; c.lineWidth=1;
   const sx=niceStep(x1-x0,6); c.textAlign="center"; c.textBaseline="top";
-  for(let v=Math.ceil(x0/sx)*sx; v<=x1+1e-9; v+=sx){ const px=X(v); c.beginPath(); c.moveTo(px,T); c.lineTo(px,H-B); c.stroke(); c.fillText(v.toFixed(sx<1?1:0),px,H-B+6); }
+  for(let v=Math.ceil(x0/sx)*sx; v<=x1+1e-9; v+=sx){ const px=X(v); c.beginPath(); c.moveTo(px,T); c.lineTo(px,H-B); c.stroke(); c.fillText(v.toFixed(Math.max(0,Math.ceil(-Math.log10(sx)-1e-9))),px,H-B+6); }
   const sy=niceStep(ym,4); c.textAlign="right"; c.textBaseline="middle";
   for(let v=0; v<=ym*1.001; v+=sy){ const py=Y(v); c.beginPath(); c.moveTo(L,py); c.lineTo(W-R,py); c.stroke(); c.fillText(fmtE(v),L-8,py); }
   c.textAlign="center"; c.textBaseline="bottom"; c.fillText("RT (min)",L+(W-L-R)/2,H-2);
@@ -1486,7 +1512,8 @@ function updateSpec(row){
     ref.append("照合1位：");
     const b=document.createElement("b"); b.textContent=mr.name; ref.append(b);
     const sp=document.createElement("span");
-    sp.textContent=` · 総合スコア ${mr.score.toFixed(2)} · 重み付きdot ${mr.wdot.toFixed(2)} · 逆dot ${mr.rdot.toFixed(2)} · 一致 ${mr.n}本`+(mr.lib?` ／ ${mr.lib}`:"");
+    const f2=v=>typeof v==="number"&&v>=0?v.toFixed(2):"–";
+    sp.textContent=` · 総合スコア ${f2(mr.score)} · 重み付きdot ${f2(mr.wdot)} · 逆dot ${f2(mr.rdot)} · 一致 ${mr.n>=0?mr.n+"本":"–"}`+(mr.lib?` ／ ${mr.lib}`:"");
     ref.append(sp);
   }
   box.hidden=false; document.body.classList.add("specon");
@@ -1494,7 +1521,7 @@ function updateSpec(row){
 $("b-menu").addEventListener("click",()=>{ $("spec").hidden=true; lastOwner="reload"; });
 
 const mctx=$("mini").getContext("2d");
-const mapX=x=>MAP.ML+x/WX*MAP.PW, mapY=z=>MAP.MT+(1-z/WZ)*MAP.PH;
+const mapX=x=>MAP.ML+x/WX*MAP.PW, mapY=z=>MAP.MT+z/WZ*MAP.PH;
 function drawMini(){
   const c=mctx, {W,H,ML,MT,PW,PH}=MAP;
   c.clearRect(0,0,W,H);
@@ -1521,7 +1548,7 @@ function drawMini(){
   if(fly){ const fx=mapX(fly.tx), fy=mapY(fly.tz); c.strokeStyle="#f2c14e"; c.lineWidth=3; c.beginPath(); c.arc(fx,fy,9,0,Math.PI*2); c.stroke();
     c.setLineDash([5,5]); c.beginPath(); c.moveTo(mapX(P.x),mapY(P.z)); c.lineTo(fx,fy); c.stroke(); c.setLineDash([]); }
   // 主人公と向き
-  const px=mapX(P.x), py=mapY(P.z), dx=Math.sin(P.h), dy=-Math.cos(P.h);
+  const px=mapX(P.x), py=mapY(P.z), dx=Math.sin(P.h), dy=Math.cos(P.h);
   c.fillStyle="#ffffff"; c.strokeStyle="#1a232b"; c.lineWidth=2.5;
   c.beginPath(); c.moveTo(px+dx*16,py+dy*16); c.lineTo(px-dy*8-dx*6,py+dx*8-dy*6); c.lineTo(px+dy*8-dx*6,py-dx*8-dy*6); c.closePath(); c.fill(); c.stroke();
 }
