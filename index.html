@@ -227,7 +227,7 @@ body.bookon #spec { display: none !important; }
   <div><span class="k">m/z</span><span class="num" id="h-mz">–</span></div>
   <div><span class="k">標高</span><span class="num" id="h-int">–</span></div>
   <div><span class="k">地層</span><span id="h-ont">–</span></div>
-  <div id="h-mouse">クリックでマウス操作 · V 視点切替</div>
+  <div id="h-mouse">クリックでマウス操作 · F5 視点切替</div>
   <div id="h-car" hidden></div>
   <div id="h-fly" hidden>飛行中 · <span class="keys-only">Space 上昇 · Shift 下降 · Space 2回で解除</span><span class="touch-only-i">上昇・下降ボタン · 地面に着くと解除</span></div>
 </div>
@@ -333,7 +333,7 @@ body.bookon #spec { display: none !important; }
     </div>
     <p>山肌の色は、その山を作っているピークの化合物クラス（MS-DIAL の Ontology）。多いクラスから順に、上位 10 クラスに色が付きます（右上で変更可）。くすんだ色は low score の山です。山に登ると、画面の下にそのピークのEICとMS/MSが出ます。</p>
     <p class="keys keys-only">画面をクリックすると、マウスで向きを変えられます（マインクラフトと同じ。<kbd>Esc</kbd> で解除）<br>
-      <kbd>W</kbd><kbd>S</kbd> 前後　<kbd>A</kbd><kbd>D</kbd> 左右　<kbd>Space</kbd> ジャンプ（2回押すと空を飛ぶ。飛行中は <kbd>Space</kbd> 上昇・<kbd>Shift</kbd> 下降）<br><kbd>Shift</kbd> 走る　<kbd>C</kbd> スライディング（押している間。下り坂ほど速い）　<kbd>V</kbd> 一人称・三人称　ホイールで距離　<kbd>←</kbd><kbd>→</kbd> 向き<br>
+      <kbd>W</kbd><kbd>S</kbd> 前後　<kbd>A</kbd><kbd>D</kbd> 左右　<kbd>Space</kbd> ジャンプ（2回押すと空を飛ぶ。飛行中は <kbd>Space</kbd> 上昇・<kbd>Shift</kbd> 下降）<br><kbd>Shift</kbd> 走る　<kbd>C</kbd> スライディング（押している間。下り坂ほど速い）　<kbd>F5</kbd> 一人称・三人称（<kbd>V</kbd> でも可）　ホイールで距離　<kbd>←</kbd><kbd>→</kbd> 向き<br>
       <kbd>R</kbd> 乗り物（4WD・月面バギー・モンスタートラック・ヘリコプター）に乗る・おりる。車は <kbd>W</kbd><kbd>S</kbd> アクセル・ブレーキ　<kbd>A</kbd><kbd>D</kbd> ハンドル　<kbd>Shift</kbd> ブースト　<kbd>Space</kbd> サイドブレーキ。ヘリは <kbd>Space</kbd> 上昇・<kbd>Shift</kbd> 下降<br>
       <kbd>F</kbd> マントで飛ぶ　<kbd>N</kbd> 絞り込み　<kbd>J</kbd> 図鑑　<kbd>E</kbd> スペクトル表示の切替　<kbd>M</kbd> 地図を大きく<br>
       地図はホイールで拡大・ドラッグで移動、クリックでスポット（ピーク）を選べます</p>
@@ -1141,6 +1141,10 @@ const isTyping=t=>!!t&&(t.tagName==="TEXTAREA"||(t.tagName==="INPUT"&&/^(text|se
 // 絞り込みのチェック・選択・スライダーは、操作し終えたらフォーカスを外して歩けるようにする
 document.addEventListener("change",e=>{ const t=e.target; if(t&&t.closest&&t.closest("#nav")&&!isTyping(t)) t.blur(); });
 addEventListener("keydown",e=>{
+  // F5 で一人称・三人称（マインクラフトと同じ）。大陸を読み込んだあとは、F5 でページを読み直さない（Ctrl+F5・Shift+F5 は読み直す）
+  if(e.key==="F5"&&!e.ctrlKey&&!e.shiftKey&&!e.metaKey&&!e.altKey){
+    if(world){ e.preventDefault(); if(playing&&!paused&&!e.repeat) toggleView(); }
+    return; }
   if(isTyping(e.target)){ if(e.key==="Escape"){ closeWarp(); e.target.blur(); } return; }
   if(!$("warp").hidden){ if(e.key==="Escape"||e.key==="f"||e.key==="F") closeWarp(); return; }
   if(!$("veh").hidden){ const n=+e.key; if(n>=1&&n<=VEH.length){ closeVeh(); board(VEH[n-1]); }
@@ -1150,7 +1154,7 @@ addEventListener("keydown",e=>{
   if((e.key==="m"||e.key==="M")&&playing){ setBigMap(!MV.big); return; }
   if((e.key==="r"||e.key==="R")&&playing){ toggleCar(); return; }
   if(e.code==="KeyC"&&!e.repeat) P.slideReq=true;
-  if((e.key==="v"||e.key==="V")&&playing){ camMode=camMode==="first"?"third":"first"; lookPitch=0; lockHint(); return; }
+  if((e.key==="v"||e.key==="V")&&playing){ toggleView(); return; }
   if(e.code==="Space"){ e.preventDefault(); if(document.activeElement&&document.activeElement.tagName==="BUTTON") document.activeElement.blur();
     keys.Space=true; if(e.repeat||!playing||paused||fly||car.on) return;   // 車では Space はサイドブレーキ
     const t=performance.now();
@@ -1173,7 +1177,8 @@ document.querySelectorAll("#pad button").forEach(b=>{
   const up=()=>keys[k]=false; b.addEventListener("pointerup",up); b.addEventListener("pointercancel",up);
 });
 let camMode="third", lookPitch=0, locked=false, noLock=false;
-function lockHint(){ $("h-mouse").textContent=(locked?"Esc でマウス解除":"クリックでマウス操作")+` · V ${camMode==="first"?"三人称へ":"一人称へ"}`; }
+function lockHint(){ $("h-mouse").textContent=(locked?"Esc でマウス解除":"クリックでマウス操作")+` · F5 ${camMode==="first"?"三人称へ":"一人称へ"}`; }
+function toggleView(){ camMode=camMode==="first"?"third":"first"; lookPitch=0; lockHint(); }
 function exitLock(){ if(document.pointerLockElement&&document.exitPointerLock) document.exitPointerLock(); }
 document.addEventListener("pointerlockchange",()=>{
   locked=document.pointerLockElement===canvas; document.body.classList.toggle("locked",locked);
