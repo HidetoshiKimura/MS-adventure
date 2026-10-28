@@ -33,7 +33,11 @@ button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 #mini{display:block;width:250px;height:auto;max-width:44vw}
 .cap{font-size:12px;color:var(--gold);margin-bottom:4px}
 .cap span{color:var(--dim);font-size:11px}
-.ont{display:grid;grid-template-columns:1fr 1fr;gap:2px 10px;font-size:11.5px;max-width:230px}
+.ont{display:grid;grid-template-columns:minmax(0,1fr);gap:2px;font-size:11.5px;width:240px;max-height:min(46vh,330px);overflow:auto;touch-action:pan-y}
+.ont span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ont span em{font-style:normal;color:var(--dim);font-family:var(--mono);font-size:10.5px;margin-left:4px}
+.cap.ctl{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.cap.ctl select{font:12px var(--mono);color:var(--ink);background:rgba(0,0,0,.28);border:1px solid var(--edge);border-radius:3px;padding:1px 3px;margin-left:4px}
 .ont i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px;vertical-align:-1px}
 @media (max-width:560px){#hud-tr{display:none}}
 #hud-bl{position:fixed;bottom:calc(env(safe-area-inset-bottom,0px) + 12px);left:max(12px,env(safe-area-inset-left,0px));display:flex;gap:8px;align-items:center}
@@ -234,8 +238,9 @@ body.bookon #spec { display: none !important; }
   </div>
 </div>
 <div id="hud-tr" class="win">
-  <div class="cap">山の色（脂質クラス）</div>
-  <div id="ont" class="ont" aria-label="山の色（脂質クラス）"></div>
+  <div class="cap ctl">山の色（化合物クラス）<label>上位 <select id="cls-n" aria-label="色を付けるクラスの数">
+    <option value="5">5</option><option value="10" selected>10</option><option value="15">15</option><option value="20">20</option><option value="0">全部</option></select></label></div>
+  <div id="ont" class="ont" aria-label="山の色（化合物クラス）"></div>
 </div>
 <div id="hud-bl">
   <div id="prog" class="win"><span class="pl">発見 </span><b class="num" id="p-n">0</b>/<span class="num" id="p-t">0</span></div>
@@ -319,7 +324,7 @@ body.bookon #spec { display: none !important; }
       <span><i style="background:var(--warn)"></i>low score（未確定）</span>
       <span><i style="background:var(--unk)"></i>未同定</span>
     </div>
-    <p>山肌の色は、その山を作っているピークの脂質クラス（MS-DIALの名前から判定）。くすんだ色は low score の山です。山に登ると、画面の下にそのピークのEICとMS/MSが出ます。</p>
+    <p>山肌の色は、その山を作っているピークの化合物クラス（MS-DIAL の Ontology）。多いクラスから順に、上位 10 クラスに色が付きます（右上で変更可）。くすんだ色は low score の山です。山に登ると、画面の下にそのピークのEICとMS/MSが出ます。</p>
     <p class="keys keys-only">画面をクリックすると、マウスで向きを変えられます（マインクラフトと同じ。<kbd>Esc</kbd> で解除）<br>
       <kbd>W</kbd><kbd>S</kbd> 前後　<kbd>A</kbd><kbd>D</kbd> 左右　<kbd>Space</kbd> ジャンプ（2回押すと空を飛ぶ。飛行中は <kbd>Space</kbd> 上昇・<kbd>Shift</kbd> 下降）<br><kbd>Shift</kbd> 走る　<kbd>V</kbd> 一人称・三人称　ホイールで距離　<kbd>←</kbd><kbd>→</kbd> 向き<br>
       <kbd>F</kbd> マントで飛ぶ　<kbd>N</kbd> 絞り込み　<kbd>J</kbd> 図鑑　<kbd>E</kbd> スペクトル表示の切替　<kbd>M</kbd> 地図を大きく<br>
@@ -776,6 +781,46 @@ function ontOf(name){
   return {i,weak};
 }
 
+const PAL20=["#3b7fc4","#d9a514","#d23f57","#1f9e89","#8e5cc4","#e5762e","#86c1ec","#6f9a24","#f293b5","#5866c4",
+  "#9a5a2a","#4fb0c6","#c46aa0","#b0b83a","#7a4fa8","#e0a070","#2f7d5a","#c94f2f","#8aa0d8","#d0c040"];
+const OTHER_C="#8fd0d8";
+let CLS_N=10, CUR_CLS=null;
+const hexRGB=c=>[1,3,5].map(i=>parseInt(c.slice(i,i+2),16)/255);
+function clsColor(i){
+  if(i<0) return "#9a9285";
+  const n=CLS_N||Infinity;
+  if(i>=n) return OTHER_C;
+  if(i<PAL20.length) return PAL20[i];
+  const h=(i*137.508)%360; return `hsl(${h.toFixed(0)},55%,58%)`;
+}
+const rgbCache=new Map();
+function clsRGB(i){ const c=clsColor(i); let v=rgbCache.get(c); if(!v){
+  if(c[0]==="#") v=hexRGB(c); else { const cv=document.createElement("canvas").getContext("2d"); cv.fillStyle=c; v=hexRGB(cv.fillStyle); }
+  rgbCache.set(c,v); } return v; }
+const NOCLASS=/^(unknown|na|n\/a|others?|formula predicted|null|none|-)?$/i;
+function classTable(ds){
+  if(ds.cls) return ds.cls;
+  const key=id=>{ const nm=ds.names[id]; if(!nm||nm.startsWith("RIKEN")) return null;
+    let o=(ds.ont[id]||"").trim(); if(!o){ const r=ontOf(nm); o=r.i>=0&&r.i<ONT.length-1?ONT[r.i].k:""; }   // 名前の規則で脂質クラスが分かるときだけ
+    return NOCLASS.test(o)?null:o; };
+  const cnt=new Map(), of={};
+  for(const r of ds.rows){ const k=key(r[0]); if(k==null) continue; of[r[0]]=k; cnt.set(k,(cnt.get(k)||0)+1); }
+  const names=[...cnt.keys()].sort((a,b)=>cnt.get(b)-cnt.get(a)||a.localeCompare(b));
+  const idx=new Map(names.map((n,i)=>[n,i]));
+  return ds.cls={names,count:names.map(n=>cnt.get(n)),idx,of};
+}
+function clsOf(ds,id){ const t=classTable(ds), k=t.of[id], nm=ds.names[id]||"";
+  return {i:k==null?-1:t.idx.get(k),weak:/^(low score|no MS2): /.test(nm)}; }
+function renderLegend(){
+  if(!world) return;
+  const t=classTable(world.ds), n=CLS_N?Math.min(CLS_N,t.names.length):t.names.length, rest=t.names.length-n;
+  const sw=(c,txt,cnt,tip)=>`<span title="${esc(tip||txt)}"><i style="background:${c}"></i>${esc(txt)}${cnt!=null?`<em>${cnt}</em>`:""}</span>`;
+  $("ont").innerHTML=t.names.length
+    ? t.names.slice(0,n).map((k,i)=>sw(clsColor(i),k,t.count[i])).join("")
+      +(rest>0?sw(OTHER_C,`その他（${rest} クラス）`,t.count.slice(n).reduce((a,b)=>a+b,0),t.names.slice(n).join(", ")):"")
+      +sw("#9a9285","未同定・クラス不明",null)
+    : sw("#9a9285","同定名がないため、山はすべて岩色です",null);
+}
 function buildHeight(rows){
   const H=new Float32Array(NX*NZ), O=new Int16Array(NX*NZ).fill(-1), OV=new Float32Array(NX*NZ);
   const wi=Math.ceil(3*SIG_X/DX), wj=Math.ceil(3*SIG_Z/DZ);
@@ -803,7 +848,7 @@ function colorFor(h,maxH,rt,mz,ont,ov){
   const ground=[0.55,0.56,0.45], rock=[0.60,0.57,0.52];
   let c=ground;
   if(ov>0.6){
-    const top=ont&&ont.i>=0?ONT[ont.i].rgb:rock;
+    const top=ont&&ont.i>=0?clsRGB(ont.i):rock;
     let a=Math.min(1,(ov-0.6)/2.4); if(ont&&ont.weak) a*=0.55;
     c=[0,1,2].map(q=>ground[q]+(top[q]-ground[q])*a);
   }
@@ -818,8 +863,8 @@ function buildWorld(key){
   if(worlds[key]) return worlds[key];
   const ds=DS[key]; setScale(ds.sc);
   const rows=ds.view||ds.rows, {H,O,OV}=buildHeight(rows);
-  const nm0=ds.names;
-  const rowOnt=rows.map(r=>ontOf(nm0[r[0]]));
+  classTable(ds);
+  const rowOnt=rows.map(r=>clsOf(ds,r[0]));
   let maxH=0; for(const v of H) if(v>maxH) maxH=v;
   const pos=new Float32Array(NX*NZ*3), col=new Float32Array(NX*NZ*3);
   const ontAt=k=>O[k]>=0?rowOnt[O[k]]:null;
@@ -942,9 +987,7 @@ function enter(key){
   const hi=world.markers.reduce((a,m)=>!a||m.r[3]>a.r[3]?m:a,null);
   P.x=hi?Math.max(2,hi.x-16):WX/4; P.z=hi?hi.z:WZ/2; P.h=Math.PI*0.5; P.yawOff=0;
   $("h-world").textContent=world.ds.label; lastOwner="reload"; landFly(true); if(hover) setHover(false); $("msg").hidden=true; msgTimer=0;
-  $("ont").innerHTML=world.ontList.length
-    ? world.ontList.map(i=>`<span><i style="background:${ONT[i].c}"></i>${ONT[i].k}</span>`).join("")+`<span><i style="background:#9a9285"></i>未同定</span>`
-    : `<span><i style="background:#9a9285"></i>同定名がないため、山はすべて岩色です</span>`;
+  renderLegend();
   updateProg();
 }
 function paint(m){
@@ -1208,7 +1251,7 @@ function rebuildWorld(){
   for(const m of world.markers){ m.found=got(key).includes(m.id); paint(m); }
   P.x=keep.x; P.z=keep.z; P.h=keep.h; P.vy=0; P.air=false;
   selectSpot(sel?world.rows.find(r=>r[0]===sel.id):null);
-  updateProg(); lastOwner="reload"; labelKey=""; syncNav();
+  updateProg(); lastOwner="reload"; labelKey=""; syncNav(); renderLegend();
 }
 function applyNav(){
   clearTimeout(navTimer);
@@ -1229,6 +1272,7 @@ function toggleNav(force){
   $("nav").hidden=!show; $("b-nav").setAttribute("aria-pressed",show);
   if(show) syncNav();
 }
+$("cls-n").onchange=e=>{ CLS_N=+e.target.value; e.target.blur(); if(!world) return; rebuildWorld(); };
 $("b-nav").onclick=()=>toggleNav(); $("nav-x").onclick=()=>toggleNav(false);
 for(const [id,k] of [["nv-ref","ref"],["nv-sug","sug"],["nv-unk","unk"],["nv-mol","mol"],["nv-ms2","ms2"],["nv-blank","blank"],["nv-uniq","uniq"]])
   $(id).onchange=e=>{ NAV[k]=e.target.checked; if(k==="uniq") $("nav-frag").hidden=!NAV.uniq; applyNav(); };
@@ -1450,7 +1494,7 @@ function tick(now){
   const lg=gy/HS+LOG0;
   $("h-int").textContent=gy>1.8?`10^${lg.toFixed(2)} ≈ ${fmtInt(10**lg)}`:"平地";
   const oh=world.ontAt(P.x,P.z), ovh=world.OVat(P.x,P.z);
-  $("h-ont").textContent=ovh>0.6?(oh&&oh.i>=0?ONT[oh.i].k+(oh.weak?"（未確定）":""):"未同定"):"平地";
+  $("h-ont").textContent=ovh>0.6?(oh&&oh.i>=0?classTable(world.ds).names[oh.i]+(oh.weak?"（未確定）":""):"未同定"):"平地";
   const own=playing&&!fly?world.ownerAt(P.x,P.z):null;
   const ownKey=own?world.key+":"+own[0]:null;
   if(ownKey!==lastOwner){ lastOwner=ownKey; updateSpec(own); }
