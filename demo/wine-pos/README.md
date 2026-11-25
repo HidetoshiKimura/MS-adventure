@@ -31,3 +31,21 @@ MS-DIAL 5.5（Metabolomics、ESI Positive）で解析した AlignmentResult 一�
 このフォルダのファイルは、上のデモデータを MS-DIAL 5.5 で解析し直した結果で、元の測定データ・ライブラリから作った二次的なデータです。同じく CC BY 4.0 に従い、出典を明記して配布しています。
 
 このデータも、アプリと同じく遊び用です。解析結果として引用しないでください。
+
+---
+
+## English: Demo data — wine (Positive)
+
+Test data loaded by the "Try the demo data (wine)" button in Peak Ridge Expedition. To keep each file small enough to upload to GitHub from a browser, every file is gzip-compressed and split into 8 MB parts (`*.gz.part00`, `*.gz.part01`, …). The page joins and decompresses them automatically.
+
+To use them locally, join and decompress the parts (e.g. `cat ….EIC.aef.gz.part* | gunzip > ….EIC.aef`).
+
+**Contents:** a full AlignmentResult set analyzed with MS-DIAL 5.5 (Metabolomics, ESI positive): peak list (8,966 peaks) with annotations and match scores (`.arf2`), per-sample peak information for 6 samples (`_PeakProperties.arf`), MS/MS (`.dcl`), EIC (`.EIC.aef`), and tags (`_tags.xml`, unused here). Settings: MS1 tolerance 0.01 Da, MS2 tolerance 0.025 Da; annotation with `MSMS-Public-Pos-VS14.msp` bundled with the MS-DIAL demo, without library retention times (RT tolerance 100 min). Raw data (`.abf`) and the library (`.msp`) are not included.
+
+**Source and license:** the original data is the wine demo data distributed with the MS-DIAL tutorial (`20160805-Wine-DDA-Pos-Demo files`, LC-MS/MS, data-dependent acquisition).
+
+- MS-DIAL / CompMS: https://systemsomicslab.github.io/compms/msdial/main.html
+- MS-DIAL 5 tutorial (Metabolomics): https://systemsomicslab.github.io/msdial5tutorial/metabolomics.html
+- License: CompMS files (including MSP libraries) are published under CC BY 4.0 (https://systemsomicslab.github.io/compms/license/main.html).
+
+The files in this folder are derived data obtained by reanalyzing the demo data above with MS-DIAL 5.5, distributed under CC BY 4.0 with attribution. Like the app, this data is just for fun; please do not cite it as an analysis result.
