@@ -1,5 +1,7 @@
 # ピーク山脈 探検記
 
+[English](#english) | 日本語
+
 **▶ [ここで遊べます](https://hidetoshikimura.github.io/MS-adventure/)**：<https://hidetoshikimura.github.io/MS-adventure/>（インストール不要。PC・携帯のブラウザで開けます）
 
 MS-DIAL 5 のアライメント結果（AlignmentResult）を読み込んで、LC-MS データを歩いて回れる 3D の山脈にするブラウザアプリです。東西が RT、南北が m/z、山の高さがピーク強度（log）です。山頂の結晶に近づくと同定結果がわかり、図鑑に記録されます。
@@ -24,6 +26,8 @@ MS-DIAL のデータが手元になくても、公開ページの「デモデー
 | `AlignmentResult_*.EIC.aef` | 任意 | EIC |
 | `AlignmentResult_*.dcl` | 任意 | MS/MS、フラグメント検索 |
 | `AlignmentResult_*_tags.xml` | 任意 | MS-DIAL で付けたタグでの絞り込み |
+
+画面は日本語と英語に対応しています。ブラウザの言語で自動的に選ばれ、スタート画面右上の「日本語 / English」で切り替えられます（URL に `?lang=ja` / `?lang=en` を付けても指定できます）。
 
 数 GB の `.EIC.aef` でも、必要なピークの部分だけを読むので動きます。MS-DIAL 5.5 のファイルで確認しています。
 
@@ -69,3 +73,81 @@ MS-DIAL のデータが手元になくても、公開ページの「デモデー
 ## ライセンス
 
 MIT License（`LICENSE` を参照）。`index.html` には three.js r128（MIT License, Copyright 2010-2021 three.js authors）を同梱しています。
+
+---
+
+## English
+
+**Peak Ridge Expedition** (ピーク山脈 探検記)
+
+**▶ [Play here](https://hidetoshikimura.github.io/MS-adventure/?lang=en)**: <https://hidetoshikimura.github.io/MS-adventure/?lang=en> (no installation; works in desktop and mobile browsers)
+
+A browser app that loads MS-DIAL 5 alignment results (AlignmentResult) and turns your LC-MS data into a 3D mountain range you can walk around. East–west is RT, north–south is m/z, and mountain height is peak intensity (log). Walk up to the crystal on a summit to see its annotation and record it in your field guide.
+
+> **This is just for fun. Do not use it for papers, presentations or quantification.**
+> The mountains are redrawn for readability and are not the real peak shapes. See "Note: mountain shapes" below. Use MS-DIAL for analysis.
+
+The interface is available in Japanese and English. The language is chosen from your browser settings and can be switched with the "日本語 / English" buttons at the top right of the start screen (or with `?lang=en` / `?lang=ja` in the URL).
+
+### How to use
+
+No MS-DIAL data at hand? Press **"Try the demo data (wine)"** on the public page (`demo/wine-pos/`: the MS-DIAL tutorial demo data, reanalyzed; see `demo/wine-pos/README.md` for the source).
+
+To use your own data:
+
+1. Open `index.html` in a browser (Chrome / Edge recommended), or open the GitHub Pages site
+2. Press "Choose a folder" and select your MS-DIAL project folder (or choose the files below / drag & drop them)
+3. Press a button such as "Go to POS Continent"
+
+| File | Required | Used for |
+|---|---|---|
+| `AlignmentResult_*.arf2` | Yes | Mountains (RT, m/z, intensity), annotations, match scores |
+| `AlignmentResult_*_PeakProperties.arf` | No | Sample names |
+| `AlignmentResult_*.EIC.aef` | No | EIC |
+| `AlignmentResult_*.dcl` | No | MS/MS, fragment search |
+| `AlignmentResult_*_tags.xml` | No | Filtering by tags set in MS-DIAL |
+
+Even multi-GB `.EIC.aef` files work, because only the parts needed for nearby peaks are read. Tested with MS-DIAL 5.5 files.
+
+### Controls
+
+| PC | Mobile | Action |
+|---|---|---|
+| Click the screen → mouse | Drag with a finger | Look around (Esc to release) |
+| W / S, A / D | ▲▼, ◀▶ | Forward/back, left/right (◀▶ turns on mobile) |
+| Space | — | Jump |
+| Space twice | "Up" | Fly (Space up, Shift down; lands when you touch the ground) |
+| Shift | — | Run |
+| V | — | First / third person |
+| Wheel | Two fingers | Zoom |
+| F | "Cape" | Fly to an alignment ID, an RT and m/z, or a spot picked on the map |
+| N | "Filter" | Peak spot navigator (Ref. matched, MS2 acquired, tags, fragment search, etc.) |
+| J | "Field guide" | List of peaks you have found |
+| E | "Spectra" / "Plots" | Show/hide the EIC and MS/MS panel |
+| M / map buttons | Map buttons | Map: zoom (wheel/pinch), pan (drag), pick a spot then "Fly here" or "Plots", double-click to fly, ⤢ to enlarge |
+
+### Your data
+
+- Selected files are read only inside your browser. Nothing is uploaded, and files are never modified.
+- Field-guide records (IDs of peaks you found) and your language choice are stored only in that browser's localStorage.
+- This repository contains no measurement data except the attributed demo data; data files are excluded by `.gitignore`.
+
+### Note: mountain shapes (just for fun)
+
+The mountains are rebuilt from MS-DIAL values to be easy to look at. They differ from the real data as follows, so **do not use them for figures in papers or presentations, quantification, or annotation decisions.**
+
+- **Peak width:** Real peak widths are not used. Every peak is drawn as a mountain of the same width (fixed in both RT and m/z). Because the map is stretched to fit the data range, the RT/m/z width a mountain represents also changes between datasets.
+- **Height:** The log of MS-DIAL's maximum peak height (HeightMax). Weak peaks (below about 200) become flat ground.
+- **Overlap:** Nearby mountains are not added together; only the taller one is shown, so smaller peaks can be hidden.
+- **"Altitude":** The value at the top left is a rough estimate back-calculated from the terrain height. Except on a summit, it does not match the peak's intensity. For the exact value, see "max intensity" shown when you climb a mountain.
+- **Colors:** Mountains are colored by MS-DIAL Ontology (compound class). The top 10 classes by peak count (5–20 or all, changeable at the top right) get colors; the rest share the "Others" color. Peaks without an Ontology are classified by name only when the lipid class can be inferred from it.
+- **Filter:** Modeled on MS-DIAL's Peak spot navigator, but the results may differ. "Peak spots %" uses the rank of relative abundance, and "Unique ions" is this app's own fragment search.
+- **EIC and MS/MS:** Drawn directly from the values in the MS-DIAL files, except that only the 30 most intense MS/MS peaks are shown.
+
+### Contributors
+
+- Map zoom and spot selection: [@TaiseiNaobayashi](https://github.com/TaiseiNaobayashi) (PR #1)
+
+### License
+
+MIT License (see `LICENSE`). `index.html` bundles three.js r128 (MIT License, Copyright 2010-2021 three.js authors).

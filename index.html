@@ -219,49 +219,53 @@ body.bookon #spec { display: none !important; }
 #ds-list button{border-color:var(--gold)}
 #upd{position:fixed;left:50%;transform:translateX(-50%);top:calc(env(safe-area-inset-top,0px) + 10px);z-index:2000;padding:8px 10px 8px 14px;font-size:14px;display:flex;align-items:center;gap:10px;border-color:var(--gold)}
 #upd button{padding:3px 10px;font-size:13px}
+/* 言語の切り替え（日本語 / English） */
+.langsw{float:right;display:flex;gap:4px;margin:0 0 6px 10px}
+.langsw button{padding:2px 10px;font-size:13px;border-width:1.5px}
+.langsw button[aria-pressed="true"]{background:var(--edge);color:#1a232b}
 </style>
 
 <canvas id="gl"></canvas>
-<div id="upd" class="win" role="status" hidden>新しい版が公開されています<button id="upd-go">再読み込み</button><button id="upd-x" aria-label="閉じる">✕</button></div>
+<div id="upd" class="win" role="status" hidden><span data-en="A new version is available">新しい版が公開されています</span><button id="upd-go" data-en="Reload">再読み込み</button><button id="upd-x" aria-label="閉じる" data-en-label="Close">✕</button></div>
 
 <div id="hud-tl" class="win" aria-live="off">
-  <div class="w" id="h-world">POS 大陸</div>
+  <div class="w" id="h-world" data-en="POS Continent">POS 大陸</div>
   <div><span class="k">RT</span><span class="num" id="h-rt">–</span> min</div>
   <div><span class="k">m/z</span><span class="num" id="h-mz">–</span></div>
-  <div><span class="k">標高</span><span class="num" id="h-int">–</span></div>
-  <div><span class="k">地層</span><span id="h-ont">–</span></div>
+  <div><span class="k" data-en="Alt.">標高</span><span class="num" id="h-int">–</span></div>
+  <div><span class="k" data-en="Class">地層</span><span id="h-ont">–</span></div>
   <div id="h-mouse">クリックでマウス操作 · V 視点切替</div>
   <div id="h-car" hidden></div>
-  <div id="h-fly" hidden>飛行中 · <span class="keys-only">Space 上昇 · Shift 下降 · Space 2回で解除</span><span class="touch-only-i">上昇・下降ボタン · 地面に着くと解除</span></div>
+  <div id="h-fly" hidden><span data-en="Flying">飛行中</span> · <span class="keys-only" data-en="Space up · Shift down · double Space to stop">Space 上昇 · Shift 下降 · Space 2回で解除</span><span class="touch-only-i" data-en="Up / Down buttons · lands when you touch the ground">上昇・下降ボタン · 地面に着くと解除</span></div>
 </div>
 <div id="hud-br" class="win">
-  <div class="mhd"><div class="cap">地図　<span>横 RT / 縦 m/z</span></div>
-    <div class="mzb"><button id="m-in" aria-label="地図を拡大">＋</button><button id="m-out" aria-label="地図を縮小">−</button><button id="m-me" aria-label="現在地を中心にして追いかける">◎</button><button id="m-all" aria-label="大陸全体を表示">全体</button><button id="m-big" aria-pressed="false" aria-label="地図を大きく表示（M）">⤢</button></div></div>
-  <canvas id="mini" width="500" height="520" aria-label="地図：横軸RT、縦軸m/z。ホイールやピンチで拡大、ドラッグで移動、クリックでスポットを選ぶ"></canvas>
-  <div id="m-hint">ホイール・ピンチで拡大 · ドラッグで移動<br>クリックでスポットを選ぶ · ダブルクリックで飛ぶ</div>
+  <div class="mhd"><div class="cap"><span data-en="Map" style="color:inherit;font-size:inherit">地図</span>　<span data-en="x: RT / y: m/z">横 RT / 縦 m/z</span></div>
+    <div class="mzb"><button id="m-in" aria-label="地図を拡大" data-en-label="Zoom in">＋</button><button id="m-out" aria-label="地図を縮小" data-en-label="Zoom out">−</button><button id="m-me" aria-label="現在地を中心にして追いかける" data-en-label="Center on me and follow">◎</button><button id="m-all" aria-label="大陸全体を表示" data-en-label="Show the whole continent" data-en="All">全体</button><button id="m-big" aria-pressed="false" aria-label="地図を大きく表示（M）" data-en-label="Enlarge map (M)">⤢</button></div></div>
+  <canvas id="mini" width="500" height="520" aria-label="地図：横軸RT、縦軸m/z。ホイールやピンチで拡大、ドラッグで移動、クリックでスポットを選ぶ" data-en-label="Map: x axis RT, y axis m/z. Wheel or pinch to zoom, drag to pan, click to select a spot"></canvas>
+  <div id="m-hint" data-i18n="m-hint">ホイール・ピンチで拡大 · ドラッグで移動<br>クリックでスポットを選ぶ · ダブルクリックで飛ぶ</div>
   <div id="m-sel" hidden>
     <div class="sn" id="ms-nm"></div>
     <div class="sm num" id="ms-meta"></div>
-    <div class="sb"><button id="ms-go">ここへ飛ぶ</button><button id="ms-sp">グラフ</button><button id="ms-x" aria-label="選択を解除">✕</button></div>
+    <div class="sb"><button id="ms-go" data-en="Fly here">ここへ飛ぶ</button><button id="ms-sp" data-en="Plots">グラフ</button><button id="ms-x" aria-label="選択を解除" data-en-label="Deselect">✕</button></div>
   </div>
 </div>
 <div id="hud-tr" class="win">
-  <div class="cap ctl">山の色（化合物クラス）<label>上位 <select id="cls-n" aria-label="色を付けるクラスの数">
-    <option value="5">5</option><option value="10" selected>10</option><option value="15">15</option><option value="20">20</option><option value="0">全部</option></select></label></div>
-  <div id="ont" class="ont" aria-label="山の色（化合物クラス）"></div>
+  <div class="cap ctl"><span data-en="Mountain color (compound class)" style="color:inherit;font-size:inherit">山の色（化合物クラス）</span><label><span data-en="Top" style="color:inherit;font-size:inherit">上位</span> <select id="cls-n" aria-label="色を付けるクラスの数" data-en-label="Number of colored classes">
+    <option value="5">5</option><option value="10" selected>10</option><option value="15">15</option><option value="20">20</option><option value="0" data-en="All">全部</option></select></label></div>
+  <div id="ont" class="ont" aria-label="山の色（化合物クラス）" data-en-label="Mountain color (compound class)"></div>
 </div>
 <div id="hud-bl">
-  <div id="prog" class="win"><span class="pl">発見 </span><b class="num" id="p-n">0</b>/<span class="num" id="p-t">0</span></div>
-  <button id="b-book" class="win">図鑑<span class="kh"> (J)</span></button>
-  <button id="b-spec" class="win" aria-pressed="true"><span class="lg">スペクトル</span><span class="sm">グラフ</span><span class="kh"> (E)</span></button>
-  <button id="b-nav" class="win" aria-pressed="false" aria-controls="nav">絞り込み<span class="kh"> (N)</span></button>
-  <button id="b-car" class="win" aria-pressed="false">乗り物<span class="kh"> (R)</span></button>
-  <button id="b-fly" class="win">マント<span class="kh"> (F)</span></button>
-  <button id="b-menu" class="win">メニュー</button>
+  <div id="prog" class="win"><span class="pl" data-en="Found ">発見 </span><b class="num" id="p-n">0</b>/<span class="num" id="p-t">0</span></div>
+  <button id="b-book" class="win"><span data-en="Field guide">図鑑</span><span class="kh"> (J)</span></button>
+  <button id="b-spec" class="win" aria-pressed="true"><span class="lg" data-en="Spectra">スペクトル</span><span class="sm" data-en="Plots">グラフ</span><span class="kh"> (E)</span></button>
+  <button id="b-nav" class="win" aria-pressed="false" aria-controls="nav"><span data-en="Filter">絞り込み</span><span class="kh"> (N)</span></button>
+  <button id="b-car" class="win" aria-pressed="false"><span data-en="Vehicle">乗り物</span><span class="kh"> (R)</span></button>
+  <button id="b-fly" class="win"><span data-en="Cape">マント</span><span class="kh"> (F)</span></button>
+  <button id="b-menu" class="win" data-en="Menu">メニュー</button>
 </div>
 <div id="cross" aria-hidden="true"></div>
 <div id="nav" class="win" hidden role="region" aria-label="Peak spot navigator">
-  <div class="nhd"><b>Peak spot navigator</b><button id="nav-x" aria-label="絞り込みを閉じる">✕</button></div>
+  <div class="nhd"><b>Peak spot navigator</b><button id="nav-x" aria-label="絞り込みを閉じる" data-en-label="Close filter">✕</button></div>
   <div class="nb">
     <div class="row"><label for="nv-label">Label</label><select id="nv-label">
       <option value="none">None</option><option value="name">Metabolite name</option><option value="mz">m/z</option>
@@ -270,13 +274,13 @@ body.bookon #spec { display: none !important; }
     <div class="row" id="nv-tagrow" hidden><label for="nv-tag">Tag</label><select id="nv-tag"></select></div>
     <div>
       <div class="amp"><span>Peak spots: <b id="nv-pct">100%</b></span><span>Num. <b id="nv-num">0</b></span></div>
-      <input type="range" id="nv-amp" min="0" max="99" step="1" value="0" aria-label="相対強度の下限（上位何%のピークを残すか）">
+      <input type="range" id="nv-amp" min="0" max="99" step="1" value="0" aria-label="相対強度の下限（上位何%のピークを残すか）" data-en-label="Relative abundance cutoff (keep the top % of peaks)">
     </div>
     <div class="cap2">Display filter</div>
     <div class="chk">
       <label><input type="checkbox" id="nv-ref"> Ref. matched</label>
       <label><input type="checkbox" id="nv-sug"> Suggested</label>
-      <label class="off" title="イオンモビリティのデータではないため使えません"><input type="checkbox" id="nv-ccs" disabled> CCS matched</label>
+      <label class="off" title="イオンモビリティのデータではないため使えません" data-en-title="Not available: this is not ion-mobility data"><input type="checkbox" id="nv-ccs" disabled> CCS matched</label>
       <label><input type="checkbox" id="nv-unk"> Unknown</label>
       <label><input type="checkbox" id="nv-mol"> Molecular ion</label>
       <label><input type="checkbox" id="nv-ms2"> MS2 acquired</label>
@@ -286,7 +290,7 @@ body.bookon #spec { display: none !important; }
     <div id="nav-frag" hidden>
       <div class="row"><label for="nv-frag">fragment m/z</label><input type="text" id="nv-frag" inputmode="decimal" placeholder="184.0733, 104.1070" spellcheck="false" autocomplete="off"></div>
       <div class="row"><label for="nv-tol">± Da</label><input type="text" id="nv-tol" inputmode="decimal" value="0.01" spellcheck="false" autocomplete="off">
-        <select id="nv-fmode" aria-label="複数のときの条件"><option value="all">すべて含む</option><option value="any">どれかを含む</option></select></div>
+        <select id="nv-fmode" aria-label="複数のときの条件" data-en-label="Match mode for multiple fragments"><option value="all" data-en="Contains all">すべて含む</option><option value="any" data-en="Contains any">どれかを含む</option></select></div>
     </div>
     <div id="nav-note" aria-live="polite"></div>
   </div>
@@ -294,35 +298,36 @@ body.bookon #spec { display: none !important; }
 <div id="spec" class="win" hidden aria-live="polite">
   <div class="hd"><span class="nm" id="sp-nm">–</span><span class="meta" id="sp-meta"></span><button id="sp-tg" class="sp-tg" aria-expanded="false">グラフを開く</button></div>
   <div class="plots">
-    <canvas id="sp-eic" width="960" height="440" aria-label="この山のEIC"></canvas>
-    <canvas id="sp-ms" width="960" height="440" aria-label="この山のMS/MSミラープロット（上：測定、下：ライブラリ）"></canvas>
+    <canvas id="sp-eic" width="960" height="440" aria-label="この山のEIC" data-en-label="EIC of this peak"></canvas>
+    <canvas id="sp-ms" width="960" height="440" aria-label="この山のMS/MSミラープロット（上：測定、下：ライブラリ）" data-en-label="MS/MS spectrum of this peak"></canvas>
   </div>
   <div class="ref" id="sp-ref"></div>
 </div>
 <div id="msg" class="win" hidden></div>
-<div id="pad" aria-label="移動ボタン">
-  <button class="u" data-k="f" aria-label="前へ">▲</button>
-  <button class="l" data-k="l" aria-label="左を向く">◀</button>
-  <button class="d" data-k="b" aria-label="後ろへ">▼</button>
-  <button class="r" data-k="r" aria-label="右を向く">▶</button>
-  <button class="au" data-k="a" aria-label="上昇（地上で押すと飛ぶ）">上昇</button>
-  <button class="ad" data-k="z" aria-label="下降">下降</button>
-  <button class="sl" data-k="c" aria-label="スライディング（押している間）">滑る</button>
+<div id="pad" aria-label="移動ボタン" data-en-label="Movement buttons">
+  <button class="u" data-k="f" aria-label="前へ" data-en-label="Forward">▲</button>
+  <button class="l" data-k="l" aria-label="左を向く" data-en-label="Turn left">◀</button>
+  <button class="d" data-k="b" aria-label="後ろへ" data-en-label="Back">▼</button>
+  <button class="r" data-k="r" aria-label="右を向く" data-en-label="Turn right">▶</button>
+  <button class="au" data-k="a" aria-label="上昇（地上で押すと飛ぶ）" data-en-label="Up (press on the ground to fly)" data-en="Up">上昇</button>
+  <button class="ad" data-k="z" aria-label="下降" data-en-label="Down" data-en="Down">下降</button>
+  <button class="sl" data-k="c" aria-label="スライディング（押している間）" data-en-label="Slide (while held)" data-en="Slide">滑る</button>
 </div>
 
 <div id="start" class="modal">
   <div class="win">
-    <h1>ピーク山脈 探検記</h1>
-    <div class="sub">MS-DIAL 5 のアライメント結果を、歩いて回れる山脈にします</div>
-    <p>東西がRT、南北がm/z、山の高さがピーク強度（log）です。山頂に光る結晶はピーク。近づくと同定結果がわかり、図鑑に記録されます。</p>
-    <div class="toy" role="note"><b>遊び用です。</b>山の形は見やすさのために作り直したもので、実際のピークではありません。山の幅はすべてのピークで同じ、高さは強度の log、近いピークは高いほうの山だけが見え、「標高」は地形から逆算した目安の値です。定量や同定の判断、学術論文・学会発表の図には使わないでください。解析には MS-DIAL を使ってください。</div>
+    <div class="langsw" role="group" aria-label="Language / 言語"><button data-lang="ja" lang="ja">日本語</button><button data-lang="en" lang="en">English</button></div>
+    <h1 data-en="Peak Ridge Expedition">ピーク山脈 探検記</h1>
+    <div class="sub" data-en="Turn your MS-DIAL 5 alignment results into a mountain range you can walk around">MS-DIAL 5 のアライメント結果を、歩いて回れる山脈にします</div>
+    <p data-en="East–west is RT, north–south is m/z, and mountain height is peak intensity (log). The glowing crystals on the summits are peaks. Walk up to one to see its annotation and record it in your field guide.">東西がRT、南北がm/z、山の高さがピーク強度（log）です。山頂に光る結晶はピーク。近づくと同定結果がわかり、図鑑に記録されます。</p>
+    <div class="toy" role="note" data-i18n="toy"><b>遊び用です。</b>山の形は見やすさのために作り直したもので、実際のピークではありません。山の幅はすべてのピークで同じ、高さは強度の log、近いピークは高いほうの山だけが見え、「標高」は地形から逆算した目安の値です。定量や同定の判断、学術論文・学会発表の図には使わないでください。解析には MS-DIAL を使ってください。</div>
     <div id="drop" class="drop">
-      <b>AlignmentResult を読み込む</b>
-      <p class="hint">MS-DIAL のプロジェクトフォルダにある <code>AlignmentResult_*.arf2</code> を選んでください。同じ名前の <code>_PeakProperties.arf</code>・<code>.EIC.aef</code>・<code>.dcl</code> も一緒に選ぶと、サンプル名・EIC・MS/MS も見られます。POS と NEG のフォルダをまとめて選べば、2つの大陸ができます。ここへドラッグ＆ドロップしてもOK。</p>
+      <b data-en="Load an AlignmentResult">AlignmentResult を読み込む</b>
+      <p class="hint" data-i18n="drop-hint">MS-DIAL のプロジェクトフォルダにある <code>AlignmentResult_*.arf2</code> を選んでください。同じ名前の <code>_PeakProperties.arf</code>・<code>.EIC.aef</code>・<code>.dcl</code> も一緒に選ぶと、サンプル名・EIC・MS/MS も見られます。POS と NEG のフォルダをまとめて選べば、2つの大陸ができます。ここへドラッグ＆ドロップしてもOK。</p>
       <div class="btnrow" style="margin-top:8px">
-        <button id="pick-files">ファイルを選ぶ</button>
-        <button id="pick-dir">フォルダごと選ぶ</button>
-        <button id="pick-demo" hidden>デモデータ（ワイン）で遊ぶ</button>
+        <button id="pick-files" data-en="Choose files">ファイルを選ぶ</button>
+        <button id="pick-dir" data-en="Choose a folder">フォルダごと選ぶ</button>
+        <button id="pick-demo" hidden data-en="Try the demo data (wine)">デモデータ（ワイン）で遊ぶ</button>
       </div>
       <input type="file" id="f-files" multiple hidden>
       <input type="file" id="f-dir" webkitdirectory multiple hidden>
@@ -330,18 +335,18 @@ body.bookon #spec { display: none !important; }
     </div>
     <div id="ds-list" class="btnrow"></div>
     <div class="legend">
-      <span><i style="background:var(--ok)"></i>同定あり</span>
-      <span><i style="background:var(--warn)"></i>low score（未確定）</span>
-      <span><i style="background:var(--unk)"></i>未同定</span>
+      <span><i style="background:var(--ok)"></i><span data-en="Annotated">同定あり</span></span>
+      <span><i style="background:var(--warn)"></i><span data-en="Low score (tentative)">low score（未確定）</span></span>
+      <span><i style="background:var(--unk)"></i><span data-en="Unknown">未同定</span></span>
     </div>
-    <p>山肌の色は、その山を作っているピークの化合物クラス（MS-DIAL の Ontology）。多いクラスから順に、上位 10 クラスに色が付きます（右上で変更可）。くすんだ色は low score の山です。山に登ると、画面の下にそのピークのEICとMS/MSが出ます。</p>
-    <p class="keys keys-only">画面をクリックすると、マウスで向きを変えられます（マインクラフトと同じ。<kbd>Esc</kbd> で解除）<br>
+    <p data-i18n="colors">山肌の色は、その山を作っているピークの化合物クラス（MS-DIAL の Ontology）。多いクラスから順に、上位 10 クラスに色が付きます（右上で変更可）。くすんだ色は low score の山です。山に登ると、画面の下にそのピークのEICとMS/MSが出ます。</p>
+    <p class="keys keys-only" data-i18n="keys">画面をクリックすると、マウスで向きを変えられます（マインクラフトと同じ。<kbd>Esc</kbd> で解除）<br>
       <kbd>W</kbd><kbd>S</kbd> 前後　<kbd>A</kbd><kbd>D</kbd> 左右　<kbd>Space</kbd> ジャンプ（2回押すと空を飛ぶ。飛行中は <kbd>Space</kbd> 上昇・<kbd>Shift</kbd> 下降）<br><kbd>Shift</kbd> 走る　<kbd>C</kbd> スライディング（押している間。下り坂ほど速い）　<kbd>V</kbd> 一人称・三人称　ホイールで距離　<kbd>←</kbd><kbd>→</kbd> 向き<br>
       <kbd>R</kbd> 乗り物（4WD・月面バギー・モンスタートラック・ヘリコプター）に乗る・おりる。車は <kbd>W</kbd><kbd>S</kbd> アクセル・ブレーキ　<kbd>A</kbd><kbd>D</kbd> ハンドル　<kbd>Shift</kbd> ブースト　<kbd>Space</kbd> サイドブレーキ。ヘリは <kbd>Space</kbd> 上昇・<kbd>Shift</kbd> 下降<br>
       <kbd>F</kbd> マントで飛ぶ　<kbd>N</kbd> 絞り込み　<kbd>J</kbd> 図鑑　<kbd>E</kbd> スペクトル表示の切替　<kbd>M</kbd> 地図を大きく<br>
       地図はホイールで拡大・ドラッグで移動、クリックでスポット（ピーク）を選べます</p>
-    <p class="touch-only">▲▼◀▶ で移動、「上昇」で空を飛び「下降」で降りる、「滑る」を押している間スライディング、「乗り物」で 4WD・月面バギー・モンスタートラック・ヘリコプターに乗りおり（車は ▲▼ アクセル・ブレーキ、◀▶ ハンドル。ヘリは「上昇」「下降」で高さ）、指でドラッグして視点、2本指で広げる・つまむとズーム。「マント」でアラインメントIDや RT・m/z を入れると、そこへ飛べます。右下の地図は2本指で拡大・1本指で移動、タップでスポットを選び「ここへ飛ぶ」で飛べます。</p>
-    <p class="hint">ファイルはこのブラウザの中だけで読み込まれ、どこにも送信されません。</p>
+    <p class="touch-only" data-i18n="touch">▲▼◀▶ で移動、「上昇」で空を飛び「下降」で降りる、「滑る」を押している間スライディング、「乗り物」で 4WD・月面バギー・モンスタートラック・ヘリコプターに乗りおり（車は ▲▼ アクセル・ブレーキ、◀▶ ハンドル。ヘリは「上昇」「下降」で高さ）、指でドラッグして視点、2本指で広げる・つまむとズーム。「マント」でアラインメントIDや RT・m/z を入れると、そこへ飛べます。右下の地図は2本指で拡大・1本指で移動、タップでスポットを選び「ここへ飛ぶ」で飛べます。</p>
+    <p class="hint" data-en="Files are read only inside this browser and are never uploaded anywhere.">ファイルはこのブラウザの中だけで読み込まれ、どこにも送信されません。</p>
   </div>
 </div>
 
@@ -349,35 +354,35 @@ body.bookon #spec { display: none !important; }
   <h2 id="q-title"></h2><p id="q-body"></p>
   <div class="opts" id="q-opts"></div>
   <div class="expl" id="q-expl" hidden></div>
-  <div class="btnrow"><button id="q-close" hidden>冒険を続ける</button></div>
+  <div class="btnrow"><button id="q-close" hidden data-en="Continue the adventure">冒険を続ける</button></div>
 </div></div>
 
 <div id="warp" class="modal" hidden><div class="win" role="dialog" aria-modal="true" aria-labelledby="w-title">
-  <h2 id="w-title">マントで飛ぶ</h2>
+  <h2 id="w-title" data-en="Fly with the cape">マントで飛ぶ</h2>
   <p class="hint" id="w-range"></p>
   <form id="w-id" autocomplete="off">
-    <label for="w-idv">アラインメントID</label><input id="w-idv" inputmode="numeric" enterkeyhint="go" spellcheck="false">
-    <button class="go">このピークへ飛ぶ</button>
+    <label for="w-idv" data-en="Alignment ID">アラインメントID</label><input id="w-idv" inputmode="numeric" enterkeyhint="go" spellcheck="false">
+    <button class="go" data-en="Fly to this peak">このピークへ飛ぶ</button>
   </form>
   <form id="w-xy" autocomplete="off">
     <label for="w-rt">RT (min)</label><input id="w-rt" inputmode="decimal" enterkeyhint="next" spellcheck="false">
     <label for="w-mz">m/z</label><input id="w-mz" inputmode="decimal" enterkeyhint="go" spellcheck="false">
-    <button class="go">この場所へ飛ぶ</button>
+    <button class="go" data-en="Fly to this spot">この場所へ飛ぶ</button>
   </form>
   <div id="w-err" aria-live="polite"></div>
-  <p class="hint">右下の地図でスポットを選んで「ここへ飛ぶ」を押すか、地図をダブルクリック（ダブルタップ）しても、その場所へ飛べます。</p>
-  <div class="btnrow"><button id="w-close">やめる (ESC)</button></div>
+  <p class="hint" data-en="You can also pick a spot on the map (bottom right) and press &quot;Fly here&quot;, or double-click (double-tap) the map to fly there.">右下の地図でスポットを選んで「ここへ飛ぶ」を押すか、地図をダブルクリック（ダブルタップ）しても、その場所へ飛べます。</p>
+  <div class="btnrow"><button id="w-close" data-en="Cancel (ESC)">やめる (ESC)</button></div>
 </div></div>
 
 <div id="veh" class="modal" hidden><div class="win" role="dialog" aria-modal="true" aria-labelledby="v-title">
-  <h2 id="v-title">乗り物をえらぶ</h2>
-  <p class="hint">選ぶと足もとに呼びます。おりた乗り物はその場に停まり、近くで同じ乗り物を選ぶとまた乗れます。</p>
+  <h2 id="v-title" data-en="Choose a vehicle">乗り物をえらぶ</h2>
+  <p class="hint" data-en="The vehicle appears at your feet. When you get off, it stays parked there; choose the same vehicle nearby to get back in.">選ぶと足もとに呼びます。おりた乗り物はその場に停まり、近くで同じ乗り物を選ぶとまた乗れます。</p>
   <div class="opts" id="v-opts"></div>
-  <div class="btnrow"><button id="v-close">やめる (ESC)</button></div>
+  <div class="btnrow"><button id="v-close" data-en="Cancel (ESC)">やめる (ESC)</button></div>
 </div></div>
 
 <div id="book" class="modal" hidden><div class="win" role="dialog" aria-modal="true" aria-labelledby="bk-title">
-  <div class="btnrow" style="margin-top:0;margin-bottom:8px"><button id="bk-close" style="border-color:var(--ok)">✕ 閉じる (ESC)</button></div>
+  <div class="btnrow" style="margin-top:0;margin-bottom:8px"><button id="bk-close" style="border-color:var(--ok)" data-en="✕ Close (ESC)">✕ 閉じる (ESC)</button></div>
   <h2 id="bk-title">ピーク図鑑</h2>
   <div class="tabs" id="bk-tabs"></div>
   <div id="bk-list"></div>
@@ -394,6 +399,38 @@ body.bookon #spec { display: none !important; }
 </script>
 <script>
 const $=id=>document.getElementById(id);
+/* ---------- 言語（日本語 / English） ----------
+   ?lang=ja / ?lang=en → 前に選んだ言語（localStorage）→ ブラウザの言語（ja 以外は英語）の順で決める。
+   HTML の文言は data-en（文字だけ）・data-i18n（HTML、下の I18N_HTML）・data-en-label/title/ph（属性）に英語を書く。
+   JS の文言は T("日本語","English") で書く。 */
+const LANG_KEY="peakRidge.lang";
+let LANG=(()=>{ try{ const q=new URLSearchParams(location.search).get("lang"); if(q==="ja"||q==="en") return q;
+    const v=localStorage.getItem(LANG_KEY); if(v==="ja"||v==="en") return v; }catch(e){}
+  const l=(navigator.languages&&navigator.languages[0])||navigator.language||"ja"; return /^ja\b/i.test(l)?"ja":"en"; })();
+const T=(ja,en)=>LANG==="en"?en:ja;
+const I18N_HTML={
+  "m-hint":"Wheel / pinch to zoom · drag to pan<br>Click to select a spot · double-click to fly",
+  "toy":"<b>Just for fun.</b> The mountains are redrawn for readability and are not the real peak shapes. Every peak gets the same width, height is log intensity, where peaks overlap only the taller one is shown, and the “altitude” is a rough value back-calculated from the terrain. Do not use this for quantification, annotation decisions, or figures in papers or presentations. Use MS-DIAL for analysis.",
+  "drop-hint":"Choose <code>AlignmentResult_*.arf2</code> from your MS-DIAL project folder. If you also select the <code>_PeakProperties.arf</code>, <code>.EIC.aef</code> and <code>.dcl</code> files with the same name, you can see sample names, EICs and MS/MS spectra too. Select the POS and NEG folders together to get two continents. Drag &amp; drop here also works.",
+  "colors":"The color of a mountainside is the compound class (MS-DIAL Ontology) of the peak that forms it. The top 10 most common classes get their own colors (change this at the top right). Dull colors mean low-score peaks. When you climb a mountain, the EIC and MS/MS of that peak appear at the bottom of the screen.",
+  "keys":`Click the screen to look around with the mouse (like Minecraft; <kbd>Esc</kbd> to release)<br>
+      <kbd>W</kbd><kbd>S</kbd> forward/back　<kbd>A</kbd><kbd>D</kbd> left/right　<kbd>Space</kbd> jump (press twice to fly; while flying <kbd>Space</kbd> up, <kbd>Shift</kbd> down)<br><kbd>Shift</kbd> run　<kbd>C</kbd> slide (while held; faster downhill)　<kbd>V</kbd> first/third person　wheel: camera distance　<kbd>←</kbd><kbd>→</kbd> turn<br>
+      <kbd>R</kbd> get in/out of a vehicle (4WD, moon buggy, monster truck, helicopter). Cars: <kbd>W</kbd><kbd>S</kbd> throttle/brake　<kbd>A</kbd><kbd>D</kbd> steer　<kbd>Shift</kbd> boost　<kbd>Space</kbd> handbrake. Helicopter: <kbd>Space</kbd> up, <kbd>Shift</kbd> down<br>
+      <kbd>F</kbd> fly with the cape　<kbd>N</kbd> filter　<kbd>J</kbd> field guide　<kbd>E</kbd> toggle spectra　<kbd>M</kbd> enlarge map<br>
+      On the map: wheel to zoom, drag to pan, click to select a spot (peak)`,
+  "touch":"Move with ▲▼◀▶. “Up” to fly, “Down” to descend, hold “Slide” to slide. “Vehicle” to get in/out of a 4WD, moon buggy, monster truck or helicopter (cars: ▲▼ throttle/brake, ◀▶ steer; helicopter: “Up”/“Down” for altitude). Drag with a finger to look around; pinch to zoom. With “Cape” you can enter an alignment ID or RT and m/z to fly there. On the map (bottom right): pinch to zoom, drag to pan, tap a spot and press “Fly here”."
+};
+function applyLang(){
+  const en=LANG==="en";
+  document.documentElement.lang=LANG;
+  document.title=T("ピーク山脈 探検記","Peak Ridge Expedition");
+  document.querySelectorAll("[data-en]").forEach(el=>{ if(el.dataset.ja==null) el.dataset.ja=el.textContent; el.textContent=en?el.dataset.en:el.dataset.ja; });
+  document.querySelectorAll("[data-i18n]").forEach(el=>{ if(el._ja==null) el._ja=el.innerHTML; const h=I18N_HTML[el.dataset.i18n]; el.innerHTML=en&&h!=null?h:el._ja; });
+  for(const [attr,key] of [["aria-label","enLabel"],["title","enTitle"],["placeholder","enPh"]])
+    document.querySelectorAll(`[data-en-${key.slice(2).toLowerCase()}]`).forEach(el=>{ const o="_ja_"+attr;
+      if(el[o]==null) el[o]=el.getAttribute(attr)||""; el.setAttribute(attr,en?el.dataset[key]:el[o]); });
+  document.querySelectorAll(".langsw button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.lang===LANG));
+}
 const PAL=["#3fb8a8","#f29a4e","#86c1ec","#f293b5","#d9a514","#b48cf2","#6f9a24","#d23f57"];
 /* ---------- MS-DIAL 5 の AlignmentResult をブラウザ内で読む ----------
    フィールド番号は MS-DIAL 5.5（MsdialCore.dll / Common.dll）の [Key(n)] 定義に合わせている。
@@ -424,10 +461,10 @@ function lz4Block(src,outLen,maxOut=outLen){
     if(s+2>src.length||d>=lim) break;
     const off=src[s]|(src[s+1]<<8); s+=2;
     let ml=tok&15; if(ml===15){ let b; do{ b=src[s++]; ml+=b; }while(b===255&&s<src.length); } ml+=4;
-    if(off===0||off>d) throw new Error("LZ4のデータが壊れています");
+    if(off===0||off>d) throw new Error(T("LZ4のデータが壊れています","LZ4 data is corrupted"));
     let m=d-off; const e=Math.min(d+ml,lim); while(d<e) dst[d++]=dst[m++];
   }
-  if(maxOut>=outLen&&d!==outLen) throw new Error("LZ4の展開サイズが合いません");
+  if(maxOut>=outLen&&d!==outLen) throw new Error(T("LZ4の展開サイズが合いません","LZ4 decompressed size does not match"));
   return d===lim?dst:dst.subarray(0,d);
 }
 /* MessagePack 整数を読む（[値, 次の位置]） */
@@ -440,14 +477,14 @@ function mpInt(u8,p){
     case 0xce: return [dv.getUint32(p+1),p+5];  case 0xd0: return [dv.getInt8(p+1),p+2];
     case 0xd1: return [dv.getInt16(p+1),p+3];  case 0xd2: return [dv.getInt32(p+1),p+5];
   }
-  throw new Error("MessagePackの整数が読めません");
+  throw new Error(T("MessagePackの整数が読めません","Cannot read a MessagePack integer"));
 }
 /* MessagePack の読み手（MessagePack-CSharp）。ext99=Lz4Block は {z:展開後のバイト列}、
    ext98=Lz4BlockArray の配列は {z:...} にまとめて返す。中身は呼び出し側が必要なときに読む。 */
 function mpReader(u8){
   const dv=new DataView(u8.buffer,u8.byteOffset,u8.byteLength), td=new TextDecoder();
   let p=0;
-  const need=n=>{ if(p+n>u8.length) throw new RangeError("データが途中で終わっています"); };
+  const need=n=>{ if(p+n>u8.length) throw new RangeError(T("データが途中で終わっています","The data ends unexpectedly")); };
   const str=n=>{ need(n); const s=td.decode(u8.subarray(p,p+n)); p+=n; return s; };
   const bin=n=>{ need(n); const r=u8.subarray(p,p+n); p+=n; return r; };
   const map=n=>{ const o={}; for(let i=0;i<n;i++){ const k=val(); o[k]=val(); } return o; };
@@ -511,7 +548,7 @@ function mpReader(u8){
       case 0xde: need(2); v=dv.getUint16(p); p+=2; return map(v);
       case 0xdf: need(4); v=dv.getUint32(p); p+=4; return map(v);
     }
-    throw new Error("MessagePackの未知の型 0x"+b.toString(16));
+    throw new Error(T("MessagePackの未知の型 0x","Unknown MessagePack type 0x")+b.toString(16));
   }
   return {val,head,get pos(){return p;},get end(){return p>=u8.length;},peek:()=>u8[p]};
 }
@@ -529,7 +566,7 @@ function mpOpen(u8){
   return mpReader(u8);
 }
 const chromRT=cx=>Array.isArray(cx)&&Array.isArray(cx[0])&&Array.isArray(cx[0][1])?cx[0][1][0]:NaN;
-const unsupported=what=>new Error(`${what} の形式を読めませんでした（MS-DIAL 5 のファイルか確認してください）`);
+const unsupported=what=>new Error(T(`${what} の形式を読めませんでした（MS-DIAL 5 のファイルか確認してください）`,`Could not read the ${what} format (please check that it is an MS-DIAL 5 file)`));
 const isSample=x=>Array.isArray(x)&&x.length>=40&&Number.isInteger(x[0])&&typeof x[1]==="string";
 
 /* .arf2：スポットを1件ずつ読み、RT・m/z・強度・名前・付加イオン・照合結果だけ残す */
@@ -655,7 +692,7 @@ function parseTags(t){
 }
 /* .dcl を丸ごと読んで、ピークごとのフラグメント m/z（基準ピークの1%以上）を返す（フラグメント検索用） */
 async function readAllFragments(file,n,progress){
-  if(file.size>1.5e9) throw new Error(".dcl が大きすぎてフラグメント検索できません");
+  if(file.size>1.5e9) throw new Error(T(".dcl が大きすぎてフラグメント検索できません",".dcl is too large for fragment search"));
   const dv=new DataView(await file.arrayBuffer()), out=new Array(n); let t=performance.now();
   for(let i=0;i<n;i++){
     const o=Number(dv.getBigInt64(11+8*i,true)), c=dv.getInt32(o+120,true);
@@ -684,25 +721,25 @@ async function loadFiles(fileList){
     const id=g.arf2.name+":"+g.arf2.size, cur=best[id], score=Object.keys(g).length*1000-k.length;
     if(!cur||score>cur.score) best[id]={k,score}; }
   const keys=Object.values(best).map(b=>b.k).filter(k=>!DS[k]).sort((a,b)=>(/neg/i.test(a)-/neg/i.test(b))||a.localeCompare(b));
-  if(!keys.length) return {added:[],errors:[Object.keys(groups).length?"AlignmentResult の .arf2 が見つかりません（すでに読み込み済みかもしれません）":"MS-DIAL の AlignmentResult ファイルが見つかりません（.arf2 を選んでください）"]};
+  if(!keys.length) return {added:[],errors:[Object.keys(groups).length?T("AlignmentResult の .arf2 が見つかりません（すでに読み込み済みかもしれません）","No AlignmentResult .arf2 found (it may already be loaded)"):T("MS-DIAL の AlignmentResult ファイルが見つかりません（.arf2 を選んでください）","No MS-DIAL AlignmentResult files found (please choose the .arf2)")]};
   const added=[], errors=[];
   for(const key of keys){
     const g=groups[key], base=key.split("/").pop(), mb=(g.arf2.size/1048576).toFixed(0);
     const say=(what,f)=>setLoadMsg(`${esc(base)}：${what}${f!=null?` ${Math.round(f*100)}%`:""}`);
     try{
-      say(`.arf2（${mb} MB）を読み込み中…`); await yieldUI();
-      const d=await parseArf2(new Uint8Array(await g.arf2.arrayBuffer()),f=>say("ピークを取り出し中…",f));
+      say(T(`.arf2（${mb} MB）を読み込み中…`,`Reading .arf2 (${mb} MB)…`)); await yieldUI();
+      const d=await parseArf2(new Uint8Array(await g.arf2.arrayBuffer()),f=>say(T("ピークを取り出し中…","Extracting peaks…"),f));
       const notes=[];
       let files={};
-      if(g.pp){ say("サンプル名を読み込み中…"); await yieldUI();
+      if(g.pp){ say(T("サンプル名を読み込み中…","Reading sample names…")); await yieldUI();
         try{ files=shortNames(await parsePeakProps(g.pp)); }catch(e){ notes.push(e.message); } }
       if(g.aef){ try{ const a=await openAef(g.aef);
-          if(a.n!==Object.keys(d.index).length&&a.n<=Math.max(...Object.values(d.index))) notes.push(".EIC.aef のピーク数が .arf2 と合いません");
+          if(a.n!==Object.keys(d.index).length&&a.n<=Math.max(...Object.values(d.index))) notes.push(T(".EIC.aef のピーク数が .arf2 と合いません","The number of peaks in .EIC.aef does not match the .arf2"));
           d.eicOf=async id=>{ const s=await a.get(d.index[id]); if(!s) return null; let ci=0;
             return {series:s.map(x=>{ const label=files[x.fid]||`File ${x.fid}`, blank=/blank/i.test(label);
               return {label,blank,col:blank?"#9aa3a8":PAL[(ci++)%PAL.length],pts:x.pts,max:x.max}; })}; };
         }catch(e){ notes.push(e.message); } }
-      if(g.tags){ try{ d.tags=parseTags(await g.tags.text()); }catch(e){ notes.push("_tags.xml を読めませんでした"); } }
+      if(g.tags){ try{ d.tags=parseTags(await g.tags.text()); }catch(e){ notes.push(T("_tags.xml を読めませんでした","Could not read _tags.xml")); } }
       if(g.dcl){ try{ const m=await openDcl(g.dcl);
           d.loadFragments=async progress=>d._frags||(d._frags=await readAllFragments(g.dcl,m.n,progress));
           d.msmsOf=async id=>{ const r=await m.get(d.index[id]); if(!r) return null;
@@ -721,12 +758,15 @@ async function loadFiles(fileList){
   // POS を先に並べる
   const order=Object.keys(DS).sort((a,b)=>(DS[a].pol>DS[b].pol?-1:DS[a].pol<DS[b].pol?1:0)||a.localeCompare(b));
   for(const k of order){ const d=DS[k]; delete DS[k]; DS[k]=d; }
-  // 大陸の名前（同じ極性が複数あれば日時を付ける）
+  relabelDS();
+  return {added,errors};
+}
+// 大陸の名前（同じ極性が複数あれば日時を付ける）
+function relabelDS(){
   for(const pol of ["pos","neg"]){
     const ks=Object.keys(DS).filter(k=>DS[k].pol===pol);
-    for(const k of ks) DS[k].label=`${pol.toUpperCase()} 大陸`+(ks.length>1?`（${DS[k].when}）`:"");
+    for(const k of ks) DS[k].label=T(`${pol.toUpperCase()} 大陸`,`${pol.toUpperCase()} Continent`)+(ks.length>1?T(`（${DS[k].when}）`,` (${DS[k].when})`):"");
   }
-  return {added,errors};
 }
 
 
@@ -766,8 +806,8 @@ let world=null;          // 現在の大陸
 const worlds={};
 
 function statusOf(name){
-  if(!name) return {s:"unk",label:"未同定"};
-  if(name.startsWith("RIKEN")) return {s:"unk",label:"ライブラリの未知スペクトルと一致"};
+  if(!name) return {s:"unk",label:T("未同定","Unknown")};
+  if(name.startsWith("RIKEN")) return {s:"unk",label:T("ライブラリの未知スペクトルと一致","Matched an unknown spectrum in the library")};
   if(name.startsWith("low score:")) return {s:"warn",label:name.replace("low score: ","").split("|")[0]};
   if(name.startsWith("no MS2:")) return {s:"warn",label:name.replace("no MS2: ","").split("|")[0]};
   return {s:"ok",label:name.split("|")[0]};
@@ -781,14 +821,16 @@ const ONT=[
   {k:"PE / LPE",c:"#1f9e89", m:["PE","LPE"]},
   {k:"SM",      c:"#8e5cc4", m:["SM"]},
   {k:"Cer",     c:"#d9a514", m:["Cer"]},
-  {k:"HexCer系",c:"#e5762e", m:["HexCer","Hex2Cer","AHexCer","SHexCer"]},
+  {k:"HexCer系",en:"HexCer etc.",c:"#e5762e", m:["HexCer","Hex2Cer","AHexCer","SHexCer"]},
   {k:"TG",      c:"#d23f57", m:["TG"]},
   {k:"DG / MG", c:"#f293b5", m:["DG","MG","DGDG","MGDG","DGMG","MGMG"]},
   {k:"PI/PS/PG",c:"#6f9a24", m:["PI","PS","PG","BMP","HBMP"]},
-  {k:"ステロール",c:"#9a5a2a", m:["CE","SE","ST","BA","25-hydroxycholecalciferol"]},
-  {k:"スフィンゴ塩基",c:"#5866c4", m:["SPB","SL"]},
-  {k:"その他",  c:"#8fd0d8", m:[]}
+  {k:"ステロール",en:"Sterols",c:"#9a5a2a", m:["CE","SE","ST","BA","25-hydroxycholecalciferol"]},
+  {k:"スフィンゴ塩基",en:"Sphingoid bases",c:"#5866c4", m:["SPB","SL"]},
+  {k:"その他",en:"Others",c:"#8fd0d8", m:[]}
 ].map(o=>({...o,rgb:[1,3,5].map(i=>parseInt(o.c.slice(i,i+2),16)/255)}));
+// クラス名の表示（名前の規則で決めた日本語のクラス名だけ英訳する）
+const clsName=k=>{ if(LANG!=="en") return k; const o=ONT.find(o=>o.k===k); return o&&o.en||k; };
 function ontOf(name){
   if(!name||name.startsWith("RIKEN")) return {i:-1,weak:false};
   const weak=/^(low score|no MS2): /.test(name);
@@ -834,10 +876,10 @@ function renderLegend(){
   const t=classTable(world.ds), n=CLS_N?Math.min(CLS_N,t.names.length):t.names.length, rest=t.names.length-n;
   const sw=(c,txt,cnt,tip)=>`<span title="${esc(tip||txt)}"><i style="background:${c}"></i>${esc(txt)}${cnt!=null?`<em>${cnt}</em>`:""}</span>`;
   $("ont").innerHTML=t.names.length
-    ? t.names.slice(0,n).map((k,i)=>sw(clsColor(i),k,t.count[i])).join("")
-      +(rest>0?sw(OTHER_C,`その他（${rest} クラス）`,t.count.slice(n).reduce((a,b)=>a+b,0),t.names.slice(n).join(", ")):"")
-      +sw("#9a9285","未同定・クラス不明",null)
-    : sw("#9a9285","同定名がないため、山はすべて岩色です",null);
+    ? t.names.slice(0,n).map((k,i)=>sw(clsColor(i),clsName(k),t.count[i])).join("")
+      +(rest>0?sw(OTHER_C,T(`その他（${rest} クラス）`,`Others (${rest} classes)`),t.count.slice(n).reduce((a,b)=>a+b,0),t.names.slice(n).map(clsName).join(", ")):"")
+      +sw("#9a9285",T("未同定・クラス不明","Unknown / no class"),null)
+    : sw("#9a9285",T("同定名がないため、山はすべて岩色です","No annotations, so all mountains are rock-colored"),null);
 }
 function buildHeight(rows){
   const H=new Float32Array(NX*NZ), O=new Int16Array(NX*NZ).fill(-1), OV=new Float32Array(NX*NZ);
@@ -1024,11 +1066,11 @@ function discover(m){
   if(!got(world.key).includes(m.id)){got(world.key).push(m.id); save();}
   updateProg();
   if(m.quiz){ openQuiz(m); return; }
-  const k={ok:"同定あり",warn:"未確定（low score / no MS2）",unk:"未同定"}[m.kind]||"";
-  if(performance.now()<keepMsgUntil){ const e=$("msg"); e.insertAdjacentHTML("beforeend",`<div class="row" style="margin-top:4px">そばの結晶：<span>${esc(m.label)}</span>（ID <span class="num">${m.id}</span>）を 図鑑に きろくした！</div>`); msgTimer=Math.max(msgTimer,6); return; }
+  const k={ok:T("同定あり","Annotated"),warn:T("未確定（low score / no MS2）","Tentative (low score / no MS2)"),unk:T("未同定","Unknown")}[m.kind]||"";
+  if(performance.now()<keepMsgUntil){ const e=$("msg"); e.insertAdjacentHTML("beforeend",(LANG==="en"?`<div class="row" style="margin-top:4px">Nearby crystal <span>${esc(m.label)}</span> (ID <span class="num">${m.id}</span>) recorded in the field guide!</div>`:`<div class="row" style="margin-top:4px">そばの結晶：<span>${esc(m.label)}</span>（ID <span class="num">${m.id}</span>）を 図鑑に きろくした！</div>`)); msgTimer=Math.max(msgTimer,6); return; }
   showMsg(`<div class="t">${esc(m.label)}</div>
-    <div class="row">ID <span class="num">${m.id}</span>　RT <span class="num">${m.r[1].toFixed(2)}</span> min　m/z <span class="num">${m.r[2].toFixed(4)}</span>　強度 <span class="num">${fmtInt(m.r[3])}</span></div>
-    <div class="row">${k} を 図鑑に きろくした！</div>`);
+    <div class="row">ID <span class="num">${m.id}</span>　RT <span class="num">${m.r[1].toFixed(2)}</span> min　m/z <span class="num">${m.r[2].toFixed(4)}</span>　${T("強度","Intensity")} <span class="num">${fmtInt(m.r[3])}</span></div>
+    <div class="row">${T(`${k} を 図鑑に きろくした！`,`${k} — recorded in the field guide!`)}</div>`);
 }
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
 function showMsg(html){ const e=$("msg"); e.innerHTML=html; e.hidden=false; msgTimer=6; }
@@ -1044,7 +1086,7 @@ function openQuiz(m){
     b.onclick=()=>{
       [...box.children].forEach((c,j)=>{c.disabled=true; if(j===q.ans)c.classList.add("right");});
       if(i!==q.ans) b.classList.add("wrong");
-      $("q-expl").innerHTML=(i===q.ans?"<b style='color:var(--ok)'>せいかい！</b> ":"<b style='color:var(--warn)'>ざんねん…</b> ")+esc(q.expl);
+      $("q-expl").innerHTML=(i===q.ans?`<b style='color:var(--ok)'>${T("せいかい！","Correct!")}</b> `:`<b style='color:var(--warn)'>${T("ざんねん…","Not quite…")}</b> `)+esc(q.expl);
       $("q-expl").hidden=false; $("q-close").hidden=false; $("q-close").focus();
     };
     box.appendChild(b);
@@ -1054,31 +1096,31 @@ function openQuiz(m){
 $("q-close").onclick=()=>{ $("quiz").hidden=true; paused=false; };
 
 /* ---------- 図鑑 ---------- */
-let bookW=null;
+let bookW=null, resetArm=false;
 function renderBook(){
   const tabs=$("bk-tabs"); tabs.innerHTML="";
   for(const k of Object.keys(DS)){ const b=document.createElement("button"); b.textContent=DS[k].label; b.setAttribute("aria-pressed",k===bookW); b.onclick=()=>{bookW=k;renderBook()}; tabs.append(b); }
   const w=worlds[bookW];
-  if(!w){ $("bk-title").textContent="ピーク図鑑"; $("bk-list").innerHTML="<p>この大陸にはまだ行っていません。</p>"; return; }
+  if(!w){ $("bk-title").textContent=T("ピーク図鑑","Peak field guide"); $("bk-list").innerHTML=`<p>${T("この大陸にはまだ行っていません。","You have not visited this continent yet.")}</p>`; return; }
   const list=w.markers.filter(m=>got(bookW).includes(m.id)).sort((a,b)=>a.r[2]-b.r[2]);
   $("bk-list").innerHTML=list.length?list.map(m=>`<div class="entry"><div class="nm" style="color:${'#'+COL[m.kind].toString(16).padStart(6,'0')}">◆ ${esc(m.label)}</div>
-    <div class="num">ID ${m.id}</div><div class="num">RT ${m.r[1].toFixed(2)} min · m/z ${m.r[2].toFixed(4)} · 強度 ${fmtInt(m.r[3])}</div></div>`).join("")
-    :`<p>まだ何も記録していません。${esc(w.ds.label)} の光る結晶に近づいてみましょう。</p>`;
-  $("bk-title").textContent=`ピーク図鑑　${list.length}/${w.markers.length}`;
+    <div class="num">ID ${m.id}</div><div class="num">RT ${m.r[1].toFixed(2)} min · m/z ${m.r[2].toFixed(4)} · ${T("強度","Intensity")} ${fmtInt(m.r[3])}</div></div>`).join("")
+    :`<p>${T(`まだ何も記録していません。${esc(w.ds.label)} の光る結晶に近づいてみましょう。`,`Nothing recorded yet. Walk up to the glowing crystals on the ${esc(w.ds.label)}.`)}</p>`;
+  $("bk-title").textContent=T(`ピーク図鑑　${list.length}/${w.markers.length}`,`Peak field guide  ${list.length}/${w.markers.length}`);
+  $("bk-reset").textContent=resetArm?T("本当に消す（もう一度押す）","Really clear? (press again)"):T("この大陸の記録を消す","Clear records for this continent");
 }
 function openBook(){ if(!$("quiz").hidden||!$("warp").hidden) return; if(!$("start").hidden) return; if(!world) return; bookW=world.key; renderBook(); exitLock(); $("book").hidden=false; document.body.classList.add("bookon"); paused=true; }
 $("b-book").onclick=openBook;
 $("bk-close").onclick=()=>{ $("book").hidden=true; document.body.classList.remove("bookon"); paused=!$("start").hidden; };
-let resetArm=false;
 $("bk-reset").onclick=e=>{
-  if(!resetArm){ resetArm=true; e.target.textContent="本当に消す（もう一度押す）"; return; }
-  saved[bookW]=[]; save(); resetArm=false; e.target.textContent="この大陸の記録を消す";
+  if(!resetArm){ resetArm=true; e.target.textContent=T("本当に消す（もう一度押す）","Really clear? (press again)"); return; }
+  saved[bookW]=[]; save(); resetArm=false; e.target.textContent=T("この大陸の記録を消す","Clear records for this continent");
   const w=worlds[bookW]; if(w) for(const m of w.markers){m.found=false;paint(m);}
   if(world) updateProg(); renderBook();
 };
 $("b-menu").onclick=()=>{ exitLock(); toggleNav(false); $("warp").hidden=true; $("book").hidden=true; document.body.classList.remove("bookon"); $("quiz").hidden=true; $("start").hidden=false; paused=true; playing=false; renderDsList(); };
 async function start(key){
-  if(!worlds[key]){ setLoadMsg(`${esc(DS[key].label)} を作っています…（大きいデータは数秒かかります）`); await new Promise(r=>requestAnimationFrame(()=>setTimeout(r,30))); }
+  if(!worlds[key]){ setLoadMsg(T(`${esc(DS[key].label)} を作っています…（大きいデータは数秒かかります）`,`Building the ${esc(DS[key].label)}… (large data can take a few seconds)`)); await new Promise(r=>requestAnimationFrame(()=>setTimeout(r,30))); }
   enter(key); $("start").hidden=true; playing=true; paused=false;
 }
 
@@ -1087,15 +1129,16 @@ function setLoadMsg(html){ $("load-msg").innerHTML=html; }
 function renderDsList(){
   const box=$("ds-list"); box.innerHTML="";
   for(const k of Object.keys(DS)){ const d=DS[k], b=document.createElement("button");
-    b.textContent=`${d.label}へ（${d.rows.length}ピーク）`; b.title=k; b.onclick=()=>start(k); box.append(b); }
+    b.textContent=T(`${d.label}へ（${d.rows.length}ピーク）`,`Go to ${d.label} (${d.rows.length} peaks)`); b.title=k; b.onclick=()=>start(k); box.append(b); }
 }
 async function handleFiles(list){
   if(!list||!list.length) return;
-  setLoadMsg("読み込み中…");
+  setLoadMsg(T("読み込み中…","Loading…"));
   const {added,errors}=await loadFiles([...list]);
   const parts=added.map(k=>{ const d=DS[k], miss=[];
-    if(!d.has.samples) miss.push("サンプル名（_PeakProperties.arf）"); if(!d.has.eic) miss.push("EIC（.EIC.aef）"); if(!d.has.msms) miss.push("MS/MS（.dcl）");
-    return `${esc(d.label)}：${d.rows.length}ピークを読み込みました`+(miss.length?`（${miss.join("・")}なし）`:""); });
+    if(!d.has.samples) miss.push(T("サンプル名（_PeakProperties.arf）","sample names (_PeakProperties.arf)")); if(!d.has.eic) miss.push(T("EIC（.EIC.aef）","EIC (.EIC.aef)")); if(!d.has.msms) miss.push(T("MS/MS（.dcl）","MS/MS (.dcl)"));
+    return T(`${esc(d.label)}：${d.rows.length}ピークを読み込みました`+(miss.length?`（${miss.join("・")}なし）`:""),
+      `${esc(d.label)}: loaded ${d.rows.length} peaks`+(miss.length?` (no ${miss.join(", ")})`:"")); });
   setLoadMsg(parts.join("<br>")+(errors.length?`<br><span class="err">${errors.map(esc).join("<br>")}</span>`:""));
   renderDsList();
   if(added.length&&!world) enter(added[0]);
@@ -1109,22 +1152,22 @@ $("pick-demo").onclick=async()=>{
   const btn=$("pick-demo"); btn.disabled=true;
   try{
     const res=await fetch(DEMO+"manifest.json",{cache:"no-cache"});
-    if(!res.ok) throw new Error("このページにはデモデータがありません");
+    if(!res.ok) throw new Error(T("このページにはデモデータがありません","This page has no demo data"));
     const m=await res.json(), files=[];
     for(const [i,f] of m.files.entries()){
-      setLoadMsg(`デモデータをダウンロード中… ${i+1}/${m.files.length}`);
+      setLoadMsg(T(`デモデータをダウンロード中… ${i+1}/${m.files.length}`,`Downloading demo data… ${i+1}/${m.files.length}`));
       const paths=f.parts||[f.path], bufs=[];
-      for(const pth of paths){ const r=await fetch(DEMO+pth); if(!r.ok) throw new Error(`${pth} を取得できませんでした`); bufs.push(await r.blob()); }
+      for(const pth of paths){ const r=await fetch(DEMO+pth); if(!r.ok) throw new Error(T(`${pth} を取得できませんでした`,`Could not download ${pth}`)); bufs.push(await r.blob()); }
       let blob=new Blob(bufs);
       if(f.gzip){ const head=new Uint8Array(await blob.slice(0,2).arrayBuffer());
         if(head[0]===0x1f&&head[1]===0x8b){                      // まだ圧縮されたままなら展開する
-          if(typeof DecompressionStream==="undefined") throw new Error("このブラウザは圧縮ファイルを展開できません（Chrome / Edge / 新しい Safari で開いてください）");
-          setLoadMsg(`EIC を展開中…`);
+          if(typeof DecompressionStream==="undefined") throw new Error(T("このブラウザは圧縮ファイルを展開できません（Chrome / Edge / 新しい Safari で開いてください）","This browser cannot decompress the files (please use Chrome, Edge or a recent Safari)"));
+          setLoadMsg(T(`EIC を展開中…`,`Decompressing EIC…`));
           blob=await new Response(blob.stream().pipeThrough(new DecompressionStream("gzip"))).blob(); } }
       files.push(new File([blob],f.name||f.path.split("/").pop()));
     }
     await handleFiles(files);
-  }catch(e){ setLoadMsg(`<span class="err">デモデータを読み込めませんでした：${esc(e.message)}</span>`); }
+  }catch(e){ setLoadMsg(`<span class="err">${T("デモデータを読み込めませんでした：","Could not load the demo data: ")}${esc(e.message)}</span>`); }
   btn.disabled=false;
 };
 $("pick-dir").onclick=()=>$("f-dir").click();
@@ -1177,7 +1220,7 @@ document.querySelectorAll("#pad button").forEach(b=>{
   const up=()=>keys[k]=false; b.addEventListener("pointerup",up); b.addEventListener("pointercancel",up);
 });
 let camMode="third", lookPitch=0, locked=false, noLock=false;
-function lockHint(){ $("h-mouse").textContent=(locked?"Esc でマウス解除":"クリックでマウス操作")+` · V ${camMode==="first"?"三人称へ":"一人称へ"}`; }
+function lockHint(){ $("h-mouse").textContent=(locked?T("Esc でマウス解除","Esc to release mouse"):T("クリックでマウス操作","Click to use the mouse"))+` · V ${camMode==="first"?T("三人称へ","third person"):T("一人称へ","first person")}`; }
 function exitLock(){ if(document.pointerLockElement&&document.exitPointerLock) document.exitPointerLock(); }
 document.addEventListener("pointerlockchange",()=>{
   locked=document.pointerLockElement===canvas; document.body.classList.toggle("locked",locked);
@@ -1257,13 +1300,13 @@ function syncNav(){
       tg.innerHTML='<option value="">None</option>'+Object.entries(defs).map(([k,v])=>`<option value="${k}">${esc(v)}</option>`).join(""); }
     tg.value=NAV.tag; }
   const can=!!ds.loadFragments; $("nv-uniq").disabled=!can; $("nv-uniqlab").classList.toggle("off",!can);
-  $("nv-uniqlab").title=can?"MS/MS に指定したフラグメントを含むピークだけ残します":".dcl（MS/MS）を読み込むと使えます";
+  $("nv-uniqlab").title=can?T("MS/MS に指定したフラグメントを含むピークだけ残します","Keep only peaks whose MS/MS contains the given fragments"):T(".dcl（MS/MS）を読み込むと使えます","Available when the .dcl (MS/MS) is loaded");
   $("nav-frag").hidden=!NAV.uniq;
   const flagged=n=>{ let c=0; for(const f of ds.flags||[]) if(f&n) c++; return c; };
   const notes=[];
-  if(NAV.blank&&!flagged(16)) notes.push("このデータにはブランクの印がありません");
-  if(NAV.mol&&!flagged(8)) notes.push("このデータには同位体の印がありません（全ピークが分子イオン）");
-  if(!navBusy) navNote(notes.join("。"));
+  if(NAV.blank&&!flagged(16)) notes.push(T("このデータにはブランクの印がありません","This data has no blank flags"));
+  if(NAV.mol&&!flagged(8)) notes.push(T("このデータには同位体の印がありません（全ピークが分子イオン）","This data has no isotope flags (all peaks are molecular ions)"));
+  if(!navBusy) navNote(notes.join(T("。",". ")));
 }
 function rebuildWorld(){
   if(!world) return;
@@ -1284,11 +1327,11 @@ function applyNav(){
     if(!world) return;
     const ds=world.ds;
     if(NAV.uniq&&ds.loadFragments&&!ds._frags){
-      navBusy=true; navNote("MS/MS を読み込み中…");
-      try{ await ds.loadFragments(f=>navNote(`MS/MS を読み込み中… ${Math.round(f*100)}%`)); }
+      navBusy=true; navNote(T("MS/MS を読み込み中…","Reading MS/MS…"));
+      try{ await ds.loadFragments(f=>navNote(T(`MS/MS を読み込み中… ${Math.round(f*100)}%`,`Reading MS/MS… ${Math.round(f*100)}%`))); }
       catch(e){ NAV.uniq=false; $("nv-uniq").checked=false; navBusy=false; navNote(e.message); return; }
     }
-    navBusy=true; navNote(ds.rows.length>5000?"大陸を作り直しています…":""); await new Promise(r=>requestAnimationFrame(()=>setTimeout(r,20)));
+    navBusy=true; navNote(ds.rows.length>5000?T("大陸を作り直しています…","Rebuilding the continent…"):""); await new Promise(r=>requestAnimationFrame(()=>setTimeout(r,20)));
     rebuildWorld(); navBusy=false; syncNav();
   },250);
 }
@@ -1312,7 +1355,7 @@ const labelCache=new Map(); let labelKey="", labelT=0, labelAt={x:-999,z:-999};
 function labelText(r){
   const ds=world.ds, id=r[0];
   switch(NAV.label){
-    case "name": return ds.names[id]?statusOf(ds.names[id]).label:"未同定";
+    case "name": return ds.names[id]?statusOf(ds.names[id]).label:T("未同定","Unknown");
     case "mz": return r[2].toFixed(4);
     case "rt": return r[1].toFixed(2)+" min";
     case "id": return "ID "+id;
@@ -1402,36 +1445,37 @@ function landFly(silent){
   if(!f||silent) return;
   P.x=f.tx; P.z=f.tz; P.y=f.ty; lastOwner="reload";
   const r=f.row||nearestRow(f.tx,f.tz), nm=r?statusOf(world.ds.names[r[0]]||"").label:"";
-  const near=r?`<div class="row">${f.row?"":"近くのピーク："}${esc(nm)}　ID <span class="num">${r[0]}</span>　RT <span class="num">${r[1].toFixed(2)}</span> min　m/z <span class="num">${r[2].toFixed(4)}</span>　強度 <span class="num">${fmtInt(r[3])}</span></div>`:"";
+  const near=r?`<div class="row">${f.row?"":T("近くのピーク：","Nearest peak: ")}${esc(nm)}　ID <span class="num">${r[0]}</span>　RT <span class="num">${r[1].toFixed(2)}</span> min　m/z <span class="num">${r[2].toFixed(4)}</span>　${T("強度","Intensity")} <span class="num">${fmtInt(r[3])}</span></div>`:"";
   // 高い山に埋もれたピークなら、そのことを添える
   const ow=f.row?world.terrainOwnerAt(f.tx,f.tz):null;
-  const hid=ow&&ow[0]!==f.row[0]?`<div class="row">この場所は ${esc(statusOf(world.ds.names[ow[0]]||"").label)}（ID <span class="num">${ow[0]}</span>、強度 <span class="num">${fmtInt(ow[3])}</span>）の山に隠れています</div>`:"";
-  showMsg(`<div class="t">${esc(f.label)} に着地！</div>${near}${hid}`); keepMsgUntil=performance.now()+1500; msgTimer=8;
+  const hid=ow&&ow[0]!==f.row[0]?(LANG==="en"?`<div class="row">This spot is hidden under the mountain of ${esc(statusOf(world.ds.names[ow[0]]||"").label)} (ID <span class="num">${ow[0]}</span>, intensity <span class="num">${fmtInt(ow[3])}</span>)</div>`:`<div class="row">この場所は ${esc(statusOf(world.ds.names[ow[0]]||"").label)}（ID <span class="num">${ow[0]}</span>、強度 <span class="num">${fmtInt(ow[3])}</span>）の山に隠れています</div>`):"";
+  showMsg(`<div class="t">${T(`${esc(f.label)} に着地！`,`Landed at ${esc(f.label)}!`)}</div>${near}${hid}`); keepMsgUntil=performance.now()+1500; msgTimer=8;
 }
 function openWarp(){
   if(!playing||!world||!$("quiz").hidden||!$("book").hidden||!$("start").hidden) return;
   const ids=world.ds.rows.map(r=>r[0]);
-  $("w-range").textContent=`この大陸：ID ${Math.min(...ids)}〜${Math.max(...ids)} · RT ${RT0}–${RT1} min · m/z ${MZ0}–${MZ1}`;
-  $("w-rt").placeholder=`いま ${toRT(P.x).toFixed(2)}`; $("w-mz").placeholder=`いま ${toMZ(P.z).toFixed(2)}`;
+  $("w-range").textContent=`${T("この大陸：","This continent: ")}ID ${Math.min(...ids)}–${Math.max(...ids)} · RT ${RT0}–${RT1} min · m/z ${MZ0}–${MZ1}`;
+  $("w-rt").placeholder=`${T("いま","now")} ${toRT(P.x).toFixed(2)}`; $("w-mz").placeholder=`${T("いま","now")} ${toMZ(P.z).toFixed(2)}`;
   $("w-err").textContent=""; $("msg").hidden=true; msgTimer=0; exitLock(); $("warp").hidden=false; paused=true;
   if(matchMedia("(pointer:fine)").matches) setTimeout(()=>$("w-idv").focus(),30);
 }
 function closeWarp(){ if($("warp").hidden) return; $("warp").hidden=true; paused=false; if(document.activeElement) document.activeElement.blur(); }
-$("sp-tg").onclick=()=>{ const o=$("spec").classList.toggle("open"); $("sp-tg").setAttribute("aria-expanded",o); $("sp-tg").textContent=o?"グラフを閉じる":"グラフを開く"; };
+const spTgText=()=>{ $("sp-tg").textContent=$("spec").classList.contains("open")?T("グラフを閉じる","Hide plots"):T("グラフを開く","Show plots"); };
+$("sp-tg").onclick=()=>{ const o=$("spec").classList.toggle("open"); $("sp-tg").setAttribute("aria-expanded",o); spTgText(); };
 $("b-fly").onclick=()=>{ $("warp").hidden?openWarp():closeWarp(); };
 $("w-close").onclick=closeWarp;
 $("w-id").onsubmit=e=>{ e.preventDefault();
   const raw=$("w-idv").value.trim().replace(/[０-９]/g,c=>String.fromCharCode(c.charCodeAt(0)-0xFEE0)), id=Number(raw);
   const byId=world.byId||(world.byId=new Map(world.ds.rows.map(r=>[r[0],r])));
   const r=raw!==""&&Number.isInteger(id)?byId.get(id):null;
-  if(!r){ $("w-err").textContent=raw===""?"アラインメントIDを入れてください":`ID ${raw} はこの大陸にありません`; return; }
+  if(!r){ $("w-err").textContent=raw===""?T("アラインメントIDを入れてください","Please enter an alignment ID"):T(`ID ${raw} はこの大陸にありません`,`ID ${raw} is not on this continent`); return; }
   closeWarp(); if(world.rows.includes(r)) selectSpot(r); flyTo(toX(r[1]),toZ(r[2]),`ID ${r[0]}`,r);
 };
 $("w-xy").onsubmit=e=>{ e.preventDefault();
   const num=v=>parseFloat(v.trim().replace(/[０-９．]/g,c=>c==="．"?".":String.fromCharCode(c.charCodeAt(0)-0xFEE0)));
   const rt=num($("w-rt").value), mz=num($("w-mz").value);
-  if(!Number.isFinite(rt)||!Number.isFinite(mz)){ $("w-err").textContent="RT と m/z を両方、数字で入れてください"; return; }
-  if(rt<RT0||rt>RT1||mz<MZ0||mz>MZ1){ $("w-err").textContent=`この大陸の外です（RT ${RT0}–${RT1} min、m/z ${MZ0}–${MZ1}）`; return; }
+  if(!Number.isFinite(rt)||!Number.isFinite(mz)){ $("w-err").textContent=T("RT と m/z を両方、数字で入れてください","Please enter both RT and m/z as numbers"); return; }
+  if(rt<RT0||rt>RT1||mz<MZ0||mz>MZ1){ $("w-err").textContent=T(`この大陸の外です（RT ${RT0}–${RT1} min、m/z ${MZ0}–${MZ1}）`,`Outside this continent (RT ${RT0}–${RT1} min, m/z ${MZ0}–${MZ1})`); return; }
   closeWarp(); flyTo(toX(rt),toZ(mz),`RT ${+rt.toFixed(3)} min · m/z ${+mz.toFixed(4)}`);
 };
 
@@ -1517,7 +1561,7 @@ function addWheels(v,g,pos,w,tireM,hubM){
   v.pts=pos;
 }
 const VEH=[
-  {key:"4wd",name:"4WD",desc:"オフロード車。急な坂もブーストで登れる",kind:"car",color:"#e39a1e",
+  {key:"4wd",name:"4WD",desc:"オフロード車。急な坂もブーストで登れる",en:["4WD","Off-road car. Boost to climb steep slopes"],kind:"car",color:"#e39a1e",
     grav:G,accel:18,boost:28,max:32,maxBoost:46,rev:12,steer:0.55,base:2.6,track:2.12,r:0.5,susp:0.3,bounce:0.25,launch:16,cam:14,look:2,eye:[-0.45,2.05],
     build(v,g){
       const paint=lam(0xe39a1e);
@@ -1532,7 +1576,7 @@ const VEH=[
       v.driver=makeDriver(false); v.driver.position.set(-0.45,1.45,-0.2); g.add(v.driver);
       addWheels(v,g,[[1.06,1.3],[-1.06,1.3],[1.06,-1.3],[-1.06,-1.3]],0.44,VM.black,VM.metal);
     }},
-  {key:"moon",name:"月面バギー",desc:"月の重力（1/6）で走る。ふわっと大ジャンプ",kind:"car",color:"#d4a52a",
+  {key:"moon",name:"月面バギー",desc:"月の重力（1/6）で走る。ふわっと大ジャンプ",en:["Moon buggy","Drives in lunar gravity (1/6 g). Big floaty jumps"],kind:"car",color:"#d4a52a",
     grav:G/6,accel:10,boost:16,max:22,maxBoost:30,rev:8,steer:0.6,base:2.4,track:2.3,r:0.55,susp:0.45,bounce:0.45,launch:12,cam:14,look:2,eye:[-0.45,1.95],
     build(v,g){
       addBox(g,2.0,0.12,3.0,VM.gold,0,0.95,0);                       // 金色の断熱シートの車台
@@ -1547,7 +1591,7 @@ const VEH=[
       v.driver=makeDriver(true); v.driver.position.set(-0.45,1.4,-0.2); g.add(v.driver);
       addWheels(v,g,[[1.15,1.2],[-1.15,1.2],[1.15,-1.2],[-1.15,-1.2]],0.36,VM.grey,VM.gold);
     }},
-  {key:"monster",name:"モンスタートラック",desc:"大きなタイヤで峰も乗りこえる。よく跳ねる",kind:"car",color:"#d23f57",
+  {key:"monster",name:"モンスタートラック",desc:"大きなタイヤで峰も乗りこえる。よく跳ねる",en:["Monster truck","Huge tires roll over ridges. Very bouncy"],kind:"car",color:"#d23f57",
     grav:G,accel:22,boost:32,max:30,maxBoost:44,rev:12,steer:0.5,base:3.2,track:3.0,r:1.15,susp:0.6,bounce:0.4,launch:18,cam:18,look:3.2,eye:[-0.5,3.6],
     build(v,g){
       const paint=lam(0xd23f57);
@@ -1560,7 +1604,7 @@ const VEH=[
       v.driver=makeDriver(false); v.driver.position.set(-0.5,2.9,-0.25); g.add(v.driver);
       addWheels(v,g,[[1.5,1.6],[-1.5,1.6],[1.5,-1.6],[-1.5,-1.6]],0.9,VM.black,VM.metal);
     }},
-  {key:"heli",name:"ヘリコプター",desc:"Space で上昇・Shift で下降。空から山脈を見わたす",kind:"heli",color:"#3b7fc4",
+  {key:"heli",name:"ヘリコプター",desc:"Space で上昇・Shift で下降。空から山脈を見わたす",en:["Helicopter","Space to climb, Shift to descend. See the whole range from above"],kind:"heli",color:"#3b7fc4",
     max:40,base:2.2,track:1.7,cam:18,look:2,eye:[-0.35,2.25],
     build(v,g){
       const paint=lam(0x3b7fc4);
@@ -1656,9 +1700,10 @@ function poseCar(dt){
     w.piv.rotation.y=w.front?car.steer:0; w.spin.rotation.x=car.spin;
   });
 }
+const vName=v=>LANG==="en"?v.en[0]:v.name, vDesc=v=>LANG==="en"?v.en[1]:v.desc;
 function vehHelp(v,touch){
-  if(v.kind==="heli") return touch?"上昇・下降ボタンで高さ、▲▼ 前後、◀▶ 旋回":"Space 上昇　Shift 下降　W/S 前後　A/D 旋回　R でおりる（着陸してから）";
-  return touch?"▲▼ でアクセル・ブレーキ、◀▶ でハンドル":"W/S アクセル・ブレーキ　A/D ハンドル　Shift ブースト　Space サイドブレーキ　R でおりる";
+  if(v.kind==="heli") return touch?T("上昇・下降ボタンで高さ、▲▼ 前後、◀▶ 旋回","Up/Down buttons for altitude, ▲▼ forward/back, ◀▶ turn"):T("Space 上昇　Shift 下降　W/S 前後　A/D 旋回　R でおりる（着陸してから）","Space up　Shift down　W/S forward/back　A/D turn　R to get out (after landing)");
+  return touch?T("▲▼ でアクセル・ブレーキ、◀▶ でハンドル","▲▼ throttle/brake, ◀▶ steer"):T("W/S アクセル・ブレーキ　A/D ハンドル　Shift ブースト　Space サイドブレーキ　R でおりる","W/S throttle/brake　A/D steer　Shift boost　Space handbrake　R to get out");
 }
 function board(v){
   if(!playing||fly||!world) return;
@@ -1670,15 +1715,15 @@ function board(v){
   car.on=true; car.parked=false; car.speed=0; car.steer=0; car.rotor=0.3; car.turn=0; P.slide=false;
   P.vx=P.vz=P.vy=0; P.air=false; P.y=carGround(); car.pitch=car.roll=0; poseCar(1); v.g.visible=true;
   const touch=matchMedia("(pointer:coarse)").matches;
-  $("h-car").textContent=`${v.name} に乗っています · ${vehHelp(v,touch)}`; $("h-car").hidden=false;
+  $("h-car").textContent=`${T(`${v.name} に乗っています`,`Riding the ${vName(v)}`)} · ${vehHelp(v,touch)}`; $("h-car").hidden=false;
   $("b-car").setAttribute("aria-pressed",true); lastOwner="reload";
-  showMsg(`<div class="t">${esc(v.name)} に乗った！</div><div class="row">${esc(vehHelp(v,touch))}${touch?"。「乗り物」でおりる":""}</div>`);
+  showMsg(`<div class="t">${T(`${esc(v.name)} に乗った！`,`You got in the ${esc(vName(v))}!`)}</div><div class="row">${esc(vehHelp(v,touch))}${touch?T("。「乗り物」でおりる",". Press “Vehicle” to get out"):""}</div>`);
 }
 // force：マントで飛ぶときなど、空中でもその場（真下の地面）に停めておりる
 function exitCar(force){
   if(!car.on) return;
   const v=car.v, gy=carGround();
-  if(v.kind==="heli"&&P.y>gy+0.6&&!force){ showMsg(`<div class="t">着陸してからおりてね</div><div class="row">${matchMedia("(pointer:coarse)").matches?"「下降」":"Shift"} で地面までおりられます</div>`); return; }
+  if(v.kind==="heli"&&P.y>gy+0.6&&!force){ showMsg(`<div class="t">${T("着陸してからおりてね","Land first, then get out")}</div><div class="row">${T(`${matchMedia("(pointer:coarse)").matches?"「下降」":"Shift"} で地面までおりられます`,`Use ${matchMedia("(pointer:coarse)").matches?"“Down”":"Shift"} to descend to the ground`)}</div>`); return; }
   if(P.air||P.y>gy){ P.air=false; P.vy=0; P.y=gy; car.rotor=0; poseCar(1); }   // 空中なら真下に停める
   car.on=false; car.parked=true; car.x=P.x; car.z=P.z; car.h=P.h; car.speed=0;
   const c=Math.cos(P.h), s=Math.sin(P.h), side=v.track/2+1.4;   // 運転席側（右）におりる
@@ -1697,7 +1742,7 @@ function openVeh(){
   const box=$("v-opts"); box.innerHTML="";
   VEH.forEach((v,i)=>{
     const b=document.createElement("button"), near=car.parked&&car.v===v&&Math.hypot(car.x-P.x,car.z-P.z)<8;
-    b.innerHTML=`<i style="background:${v.color}"></i><span class="kh">${i+1} </span><b>${esc(v.name)}</b>${near?" <em>（近くに停めてある）</em>":""}<br><span class="d">${esc(v.desc)}</span>`;
+    b.innerHTML=`<i style="background:${v.color}"></i><span class="kh">${i+1} </span><b>${esc(vName(v))}</b>${near?` <em>${T("（近くに停めてある）","(parked nearby)")}</em>`:""}<br><span class="d">${esc(vDesc(v))}</span>`;
     b.onclick=()=>{ closeVeh(); board(v); };
     box.append(b);
   });
@@ -1823,9 +1868,9 @@ function tick(now){
   $("h-rt").textContent=toRT(P.x).toFixed(2);
   $("h-mz").textContent=toMZ(P.z).toFixed(1);
   const lg=gy/HS+LOG0;
-  $("h-int").textContent=gy>1.8?`10^${lg.toFixed(2)} ≈ ${fmtInt(10**lg)}`:"平地";
+  $("h-int").textContent=gy>1.8?`10^${lg.toFixed(2)} ≈ ${fmtInt(10**lg)}`:T("平地","Flat");
   const oh=world.ontAt(P.x,P.z), ovh=world.OVat(P.x,P.z);
-  $("h-ont").textContent=ovh>0.6?(oh&&oh.i>=0?classTable(world.ds).names[oh.i]+(oh.weak?"（未確定）":""):"未同定"):"平地";
+  $("h-ont").textContent=ovh>0.6?(oh&&oh.i>=0?clsName(classTable(world.ds).names[oh.i])+(oh.weak?T("（未確定）"," (tentative)"):""):T("未同定","Unknown")):T("平地","Flat");
   const own=playing&&!fly?world.ownerAt(P.x,P.z):null;
   const ownKey=own?world.key+":"+own[0]:null;
   if(ownKey!==lastOwner){ lastOwner=ownKey; updateSpec(own); }
@@ -1848,20 +1893,20 @@ function frame(c,title,W,H,L,R,T,B){
 }
 function noData(c,W,H,msg){ c.fillStyle="#a9b4bb"; c.font="22px 'DotGothic16', sans-serif"; c.textAlign="center"; c.textBaseline="middle"; c.fillText(msg,W/2,H/2+10); }
 function drawEIC(cv,e,rtMark,msg){
-  const c=cv.getContext("2d"), W=cv.width, H=cv.height, L=86, R=18, T=44, B=48;
-  frame(c,e?`EIC（${e.series.length}検体）`:"EIC",W,H,L,R,T,B);
+  const c=cv.getContext("2d"), W=cv.width, H=cv.height, L=86, R=18, TP=44, B=48;
+  frame(c,e?T(`EIC（${e.series.length}検体）`,`EIC (${e.series.length} samples)`):"EIC",W,H,L,R,TP,B);
   if(!e){ noData(c,W,H,msg); return; }
   const many=e.series.length>8;
   let x0=Infinity,x1=-Infinity,ym=1;
   for(const s of e.series) for(const [x,y] of s.pts){ if(x<x0)x0=x; if(x>x1)x1=x; if(y>ym)ym=y; }
-  const X=x=>L+(x-x0)/(x1-x0||1)*(W-L-R), Y=y=>H-B-y/ym*(H-B-T);
+  const X=x=>L+(x-x0)/(x1-x0||1)*(W-L-R), Y=y=>H-B-y/ym*(H-B-TP);
   c.font="18px 'IBM Plex Mono', monospace"; c.fillStyle="#c9d2d8"; c.strokeStyle="rgba(243,241,232,.12)"; c.lineWidth=1;
   const sx=niceStep(x1-x0,6); c.textAlign="center"; c.textBaseline="top";
-  for(let v=Math.ceil(x0/sx)*sx; v<=x1+1e-9; v+=sx){ const px=X(v); c.beginPath(); c.moveTo(px,T); c.lineTo(px,H-B); c.stroke(); c.fillText(v.toFixed(Math.max(0,Math.ceil(-Math.log10(sx)-1e-9))),px,H-B+6); }
+  for(let v=Math.ceil(x0/sx)*sx; v<=x1+1e-9; v+=sx){ const px=X(v); c.beginPath(); c.moveTo(px,TP); c.lineTo(px,H-B); c.stroke(); c.fillText(v.toFixed(Math.max(0,Math.ceil(-Math.log10(sx)-1e-9))),px,H-B+6); }
   const sy=niceStep(ym,4); c.textAlign="right"; c.textBaseline="middle";
   for(let v=0; v<=ym*1.001; v+=sy){ const py=Y(v); c.beginPath(); c.moveTo(L,py); c.lineTo(W-R,py); c.stroke(); c.fillText(fmtE(v),L-8,py); }
   c.textAlign="center"; c.textBaseline="bottom"; c.fillText("RT (min)",L+(W-L-R)/2,H-2);
-  if(rtMark>=x0&&rtMark<=x1){ c.setLineDash([6,6]); c.strokeStyle="rgba(242,193,78,.8)"; c.lineWidth=2; c.beginPath(); c.moveTo(X(rtMark),T); c.lineTo(X(rtMark),H-B); c.stroke(); c.setLineDash([]); }
+  if(rtMark>=x0&&rtMark<=x1){ c.setLineDash([6,6]); c.strokeStyle="rgba(242,193,78,.8)"; c.lineWidth=2; c.beginPath(); c.moveTo(X(rtMark),TP); c.lineTo(X(rtMark),H-B); c.stroke(); c.setLineDash([]); }
   let lx=L+10;
   for(const s of e.series){
     const col=s.col;
@@ -1870,20 +1915,20 @@ function drawEIC(cv,e,rtMark,msg){
     c.fillStyle=col; c.font="17px 'IBM Plex Mono', monospace"; c.textAlign="left"; c.textBaseline="top";
     c.globalAlpha=1;
     if(many){ if(lx<W){ const nb=e.series.filter(x=>x.blank).length, tp=e.series.reduce((a,b)=>b.max>a.max?b:a); c.fillStyle="#c9d2d8";
-      c.fillText(`${e.series.length}検体${nb?`（Blank ${nb}）`:""} · 最大 ${tp.label} ${fmtE(tp.max)}`,lx,T+4); lx=W; } continue; }
-    const t=`${s.label} ${fmtE(s.max)}`; if(lx<W-R-160){ c.fillText(t,lx,T+4); lx+=c.measureText(t).width+22; } else if(lx<W) { c.fillText("…",lx,T+4); lx=W; }
+      c.fillText(T(`${e.series.length}検体${nb?`（Blank ${nb}）`:""} · 最大 ${tp.label} ${fmtE(tp.max)}`,`${e.series.length} samples${nb?` (blank ${nb})`:""} · max ${tp.label} ${fmtE(tp.max)}`),lx,TP+4); lx=W; } continue; }
+    const t=`${s.label} ${fmtE(s.max)}`; if(lx<W-R-160){ c.fillText(t,lx,TP+4); lx+=c.measureText(t).width+22; } else if(lx<W) { c.fillText("…",lx,TP+4); lx=W; }
   }
 }
 function drawMS(cv,ms,msg){
-  const c=cv.getContext("2d"), W=cv.width, H=cv.height, L=86, R=18, T=44, B=48;
-  frame(c,"MS/MS（測定・強度上位30本）",W,H,L,R,T,B);
+  const c=cv.getContext("2d"), W=cv.width, H=cv.height, L=86, R=18, TP=44, B=48;
+  frame(c,T("MS/MS（測定・強度上位30本）","MS/MS (measured, top 30 peaks)"),W,H,L,R,TP,B);
   if(!ms||!ms.fr.length){ noData(c,W,H,msg); return; }
   const im=Math.max(...ms.fr.map(f=>f[1]));
   const x0=Math.max(0,Math.floor((Math.min(...ms.fr.map(f=>f[0]))-30)/50)*50), x1=Math.ceil((Math.max(ms.pmz,...ms.fr.map(f=>f[0]))+20)/50)*50;
-  const X=x=>L+(x-x0)/(x1-x0)*(W-L-R), Y=y=>H-B-y/im*(H-B-T-26);
+  const X=x=>L+(x-x0)/(x1-x0)*(W-L-R), Y=y=>H-B-y/im*(H-B-TP-26);
   c.font="18px 'IBM Plex Mono', monospace"; c.fillStyle="#c9d2d8"; c.strokeStyle="rgba(243,241,232,.12)"; c.lineWidth=1;
   const sx=niceStep(x1-x0,7); c.textAlign="center"; c.textBaseline="top";
-  for(let v=Math.ceil(x0/sx)*sx; v<=x1; v+=sx){ const px=X(v); c.beginPath(); c.moveTo(px,T); c.lineTo(px,H-B); c.stroke(); c.fillText(v,px,H-B+6); }
+  for(let v=Math.ceil(x0/sx)*sx; v<=x1; v+=sx){ const px=X(v); c.beginPath(); c.moveTo(px,TP); c.lineTo(px,H-B); c.stroke(); c.fillText(v,px,H-B+6); }
   c.textAlign="right"; c.textBaseline="middle";
   for(const p of [0,50,100]){ const py=Y(im*p/100); c.fillText(p+"%",L-8,py); }
   c.textAlign="center"; c.textBaseline="bottom"; c.fillText("m/z",L+(W-L-R)/2,H-2);
@@ -1900,21 +1945,21 @@ function updateSpec(row){
   if(!row||!specOn||!playing){ box.hidden=true; document.body.classList.remove("specon"); return; }
   const ds=world.ds, id=row[0], st=statusOf(ds.names[id]||"");
   $("sp-nm").textContent=st.label;
-  $("sp-meta").textContent=`${ds.pol.toUpperCase()} ID ${id} · m/z ${row[2].toFixed(4)} · RT ${row[1].toFixed(2)} min · 最大強度 ${fmtInt(row[3])}${ds.adduct[id]?" · "+ds.adduct[id]:""}`;
+  $("sp-meta").textContent=`${ds.pol.toUpperCase()} ID ${id} · m/z ${row[2].toFixed(4)} · RT ${row[1].toFixed(2)} min · ${T("最大強度","max intensity")} ${fmtInt(row[3])}${ds.adduct[id]?" · "+ds.adduct[id]:""}`;
   const seq=++specSeq;
-  drawEIC($("sp-eic"),null,row[1],ds.eicOf?"EICを読み込み中…":"EICを見るには .EIC.aef も読み込んでください");
-  drawMS($("sp-ms"),null,ds.msmsOf?"MS/MSを読み込み中…":"MS/MSを見るには .dcl も読み込んでください");
-  if(ds.eicOf) ds.eicOf(id).then(e=>{ if(seq===specSeq) drawEIC($("sp-eic"),e,row[1],"このピークのEICはありません"); },
-    ()=>{ if(seq===specSeq) drawEIC($("sp-eic"),null,row[1],"EICを読めませんでした"); });
-  if(ds.msmsOf) ds.msmsOf(id).then(ms=>{ if(seq===specSeq) drawMS($("sp-ms"),ms,"このピークにはMS/MSがありません"); },
-    ()=>{ if(seq===specSeq) drawMS($("sp-ms"),null,"MS/MSを読めませんでした"); });
+  drawEIC($("sp-eic"),null,row[1],ds.eicOf?T("EICを読み込み中…","Loading EIC…"):T("EICを見るには .EIC.aef も読み込んでください","Load the .EIC.aef to see the EIC"));
+  drawMS($("sp-ms"),null,ds.msmsOf?T("MS/MSを読み込み中…","Loading MS/MS…"):T("MS/MSを見るには .dcl も読み込んでください","Load the .dcl to see MS/MS"));
+  if(ds.eicOf) ds.eicOf(id).then(e=>{ if(seq===specSeq) drawEIC($("sp-eic"),e,row[1],T("このピークのEICはありません","No EIC for this peak")); },
+    ()=>{ if(seq===specSeq) drawEIC($("sp-eic"),null,row[1],T("EICを読めませんでした","Could not read the EIC")); });
+  if(ds.msmsOf) ds.msmsOf(id).then(ms=>{ if(seq===specSeq) drawMS($("sp-ms"),ms,T("このピークにはMS/MSがありません","No MS/MS for this peak")); },
+    ()=>{ if(seq===specSeq) drawMS($("sp-ms"),null,T("MS/MSを読めませんでした","Could not read the MS/MS")); });
   const mr=ds.match[id], ref=$("sp-ref"); ref.textContent="";
   if(mr){
-    ref.append("照合1位：");
+    ref.append(T("照合1位：","Top match: "));
     const b=document.createElement("b"); b.textContent=mr.name; ref.append(b);
     const sp=document.createElement("span");
     const f2=v=>typeof v==="number"&&v>=0?v.toFixed(2):"–";
-    sp.textContent=` · 総合スコア ${f2(mr.score)} · 重み付きdot ${f2(mr.wdot)} · 逆dot ${f2(mr.rdot)} · 一致 ${mr.n>=0?mr.n+"本":"–"}`+(mr.lib?` ／ ${mr.lib}`:"");
+    sp.textContent=T(` · 総合スコア ${f2(mr.score)} · 重み付きdot ${f2(mr.wdot)} · 逆dot ${f2(mr.rdot)} · 一致 ${mr.n>=0?mr.n+"本":"–"}`,` · total score ${f2(mr.score)} · weighted dot ${f2(mr.wdot)} · reverse dot ${f2(mr.rdot)} · matched peaks ${mr.n>=0?mr.n:"–"}`)+(mr.lib?` ／ ${mr.lib}`:"");
     ref.append(sp);
   }
   box.hidden=false; document.body.classList.add("specon");
@@ -2043,7 +2088,7 @@ function selectSpot(r){
   selMark.position.set(x,world.hAt(x,z),z); selMark.visible=true;
   $("ms-nm").textContent=st.label;
   $("ms-nm").style.color=SPOT_COL[st.s];
-  $("ms-meta").textContent=`ID ${id} · RT ${r[1].toFixed(2)} min · m/z ${r[2].toFixed(4)} · 強度 ${fmtInt(r[3])}`+(ds.adduct[id]?` · ${ds.adduct[id]}`:"")+(ds.ont[id]?` · ${ds.ont[id]}`:"");
+  $("ms-meta").textContent=`ID ${id} · RT ${r[1].toFixed(2)} min · m/z ${r[2].toFixed(4)} · ${T("強度","intensity")} ${fmtInt(r[3])}`+(ds.adduct[id]?` · ${ds.adduct[id]}`:"")+(ds.ont[id]?` · ${ds.ont[id]}`:"");
   $("m-sel").hidden=false; $("m-hint").hidden=true;
 }
 // 地図の点 (px,py)（論理座標）にいちばん近いスポット。tol は論理座標での半径
@@ -2122,5 +2167,17 @@ if(/^https?:$/.test(location.protocol)){
   setTimeout(check,3000); setInterval(check,5*60*1000);
   document.addEventListener("visibilitychange",()=>{ if(!document.hidden) check(); });   // タブに戻ってきたときにも確認
 }
+/* 言語の切り替え。読み込み済みの大陸は名前を付け直し、次に入るときに作り直す（山の上の文字も変わる） */
+function setLang(l){
+  if(l===LANG) return;
+  LANG=l; try{ localStorage.setItem(LANG_KEY,l); }catch(e){}
+  try{ const u=new URL(location.href); if(u.searchParams.has("lang")){ u.searchParams.set("lang",l); history.replaceState(null,"",u.href); } }catch(e){}
+  applyLang(); lockHint(); spTgText();
+  relabelDS(); for(const k of Object.keys(worlds)) delete worlds[k];
+  if(world){ world.ds.label&&($("h-world").textContent=world.ds.label); renderLegend(); syncNav(); }
+  renderDsList(); setLoadMsg("");
+}
+document.querySelectorAll(".langsw button").forEach(b=>b.onclick=()=>setLang(b.dataset.lang));
+applyLang(); lockHint(); spTgText();
 requestAnimationFrame(tick);
 </script>
